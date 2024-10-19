@@ -13,7 +13,7 @@ onMounted(() => {
 });
 
 function loadLists() {
-  axios.get('item-lists')
+  axios.get('lists')
     .then(response => {
       lists.value = response.data;
       lists.value.forEach(list => getItemsByList(list.id));
@@ -34,7 +34,7 @@ function createList() {
   }
 
   // TODO: Remove hard-coded test user ID once authentication code is added
-  axios.post('/item-lists', { name: newListName.value, user: 1 })
+  axios.post('/lists', { name: newListName.value, user: 1 })
     .then(() => {
       loadLists();
       newListName.value = '';
@@ -45,8 +45,7 @@ function createList() {
 }
 
 function getItemsByList(listId) {
-  // TODO: Remove hard-coded test user ID once authentication code is added
-  axios.get(`lists/${listId}/items?userId=1`)
+  axios.get(`lists/${listId}/items`)
     .then(response => {
       const list = lists.value.find(list => list.id === listId);
       list.items = response.data;

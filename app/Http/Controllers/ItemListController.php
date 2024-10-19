@@ -9,7 +9,7 @@ class ItemListController extends Controller
 {
     public function index()
     {
-        $items = ItemList::all();
-        return response()->json($items);
+        $itemLists = ItemList::all();
+        return response()->json($itemLists);
     }
 }
