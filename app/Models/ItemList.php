@@ -16,6 +16,7 @@ class ItemList extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'id',
         'name',
         'user_id',
         'crossed_out',

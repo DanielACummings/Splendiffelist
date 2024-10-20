@@ -31,6 +31,8 @@ Route::get('/lists/{listId}/items', [ItemController::class, 'show'])
     ->middleware(['auth', 'verified'])->name('item-lists.show');
 Route::post('/lists/{listId}', [ItemController::class, 'store'])
     ->middleware(['auth', 'verified'])->name('item-lists.store');
+Route::delete('/items/{itemId}', [ItemController::class, 'destroy'])
+    ->middleware(['auth', 'verified'])->name('item-lists.destroy');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])

@@ -26,7 +26,18 @@ class ItemController extends Controller
         $item->item_list_id = $listId;
         $item->save();
 
-        return response()
-            ->json(['message' => 'Item created successfully'], 201);
+        return response()->json(['message' => 'Item created successfully'],
+            201);
+    }
+
+    public function destroy($itemId)
+    {
+        $item = Item::find($itemId);
+        if ($item) {
+            $item->delete();
+            return response()->json(['message' => 'Item deleted successfully'], 200);
+        } else {
+            return response()->json(['error' => 'Item not found'], 404);
+        }
     }
 }

@@ -12,6 +12,7 @@ onMounted(() => {
   loadLists();
 });
 
+// Lists
 function loadLists() {
   axios.get('lists')
     .then(response => {
@@ -46,6 +47,7 @@ function createList() {
     });
 }
 
+// Items
 function getItemsByList(listId) {
   axios.get(`lists/${listId}/items`)
     .then(response => {
@@ -74,11 +76,20 @@ function createItem(listId) {
       console.error(error);
     });
 }
+
+function deleteItem(listId, itemId) {
+  axios.delete(`items/${itemId}`)
+    .then(() => {
+      this.getItemsByList(listId);
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}
 </script>
 
 <template>
   <Head title="Dashboard" />
-
   <AuthenticatedLayout>
       <template #header>
           <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
@@ -107,6 +118,7 @@ function createItem(listId) {
               </form>
               <ul>
                 <li v-for="item in list.items" :key="item.id">
+                  <button class="delete-button" @click="deleteItem(list.id, item.id)">X</button>
                   <span :class="{ 'crossed-out': item.crossedOut }" class="text-gray-800 dark:text-gray-200">• {{ item.name }}</span>
                 </li>
               </ul>
@@ -120,3 +132,16 @@ function createItem(listId) {
         </div>
   </AuthenticatedLayout>
 </template>
+
+<style>
+.delete-button {
+  font-size: 12px;
+  padding: 2px 4px;
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-right: 5px;
+}
+</style>
