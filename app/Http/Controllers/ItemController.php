@@ -18,4 +18,15 @@ class ItemController extends Controller
             return response()->json(['error' => 'List not found'], 404);
         }
     }
+
+    public function store(Request $request, $listId)
+    {
+        $item = new Item();
+        $item->name = $request->input('name');
+        $item->item_list_id = $listId;
+        $item->save();
+
+        return response()
+            ->json(['message' => 'Item created successfully'], 201);
+    }
 }

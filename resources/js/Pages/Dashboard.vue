@@ -6,7 +6,7 @@ import { ref, onMounted } from 'vue';
 
 const lists = ref([]);
 const newListName = ref('');
-const newItemName = ref('');
+const newItemNames = ref({}); // Object to hold new item names for each list
 
 onMounted(() => {
   loadLists();
@@ -16,7 +16,10 @@ function loadLists() {
   axios.get('lists')
     .then(response => {
       lists.value = response.data;
-      lists.value.forEach(list => getItemsByList(list.id));
+      lists.value.forEach(list => {
+        newItemNames.value[list.id] = ''; // Initialize the new item name for each list
+        getItemsByList(list.id);
+      });
     })
     .catch(error => {
       console.error(error);
@@ -33,8 +36,7 @@ function createList() {
     return;
   }
 
-  // TODO: Remove hard-coded test user ID once authentication code is added
-  axios.post('/lists', { name: newListName.value, user: 1 })
+  axios.post('/lists', { name: newListName.value })
     .then(() => {
       loadLists();
       newListName.value = '';
@@ -55,16 +57,18 @@ function getItemsByList(listId) {
     });
 }
 
-function addItem(listId) {
-  if (newItemName.value.trim() === '') {
+function createItem(listId) {
+  const newItemName = newItemNames.value[listId].trim();
+  if (newItemName === '') {
     alert('Please enter a list item name');
     return;
   }
 
-  axios.post(`lists/${listId}/items`, { name: newItemName.value })
+  axios.post(`lists/${listId}`, { name: newItemName })
     .then(() => {
-      loadLists();
-      newItemName.value = '';
+      // Reload items for the list
+      getItemsByList(listId);
+      newItemNames.value[listId] = ''; // Clear the input after submission
     })
     .catch(error => {
       console.error(error);
@@ -73,44 +77,46 @@ function addItem(listId) {
 </script>
 
 <template>
-    <Head title="Dashboard" />
+  <Head title="Dashboard" />
 
-    <AuthenticatedLayout>
-        <template #header>
-            <h2
-                class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200"
-            >
-                Dashboard
-            </h2>
-        </template>
+  <AuthenticatedLayout>
+      <template #header>
+          <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
+              Dashboard
+          </h2>
+      </template>
 
-        <div class="py-12">
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <div
-                    class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800"
-                >
-                    <div class="p-6 text-gray-900 dark:text-gray-100">
-                        You're logged in!
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div>
-            <h1>Lists</h1>
-            <ul>
-              <li v-for="list in lists" :key="list.id">
-                <span :class="{ 'crossed-out': list.crossedOut }">{{ list.name }}</span>
-                <ul>
-                  <li v-for="item in list.items" :key="item.id">
-                    <span :class="{ 'crossed-out': item.crossedOut }">{{ item.name }}</span>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-            <form @submit.prevent="createList">
-              <input type="text" v-model="newListName" placeholder="Enter new list name">
-              <button type="submit">Create List</button>
-            </form>
+      <div class="py-12">
+          <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+              <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
+                  <div class="p-6 text-gray-900 dark:text-gray-100">
+                      You're logged in!
+                  </div>
+              </div>
           </div>
-    </AuthenticatedLayout>
+      </div>
+      <div>
+          <h1 class="text-gray-800 dark:text-gray-200">Lists:</h1> 
+          <ul>
+            <li v-for="list in lists" :key="list.id">
+              <br/>
+              <span :class="{ 'crossed-out': list.crossedOut }" class="text-gray-800 dark:text-gray-200">{{ list.name }}</span>
+              <form @submit.prevent="createItem(list.id)">
+                <input type="text" v-model="newItemNames[list.id]" placeholder="Enter new item name" class="text-gray-800 dark:text-gray-200" />
+                <button type="submit" class="text-gray-800 dark:text-gray-200">Add Item</button>
+              </form>
+              <ul>
+                <li v-for="item in list.items" :key="item.id">
+                  <span :class="{ 'crossed-out': item.crossedOut }" class="text-gray-800 dark:text-gray-200">• {{ item.name }}</span>
+                </li>
+              </ul>
+            </li>
+          </ul>
+          <br/>
+          <form @submit.prevent="createList">
+            <input type="text" v-model="newListName" placeholder="Enter new list name" class="text-gray-800 dark:text-gray-200" />
+            <button type="submit" class="text-gray-800 dark:text-gray-200">Create List</button>
+          </form>
+        </div>
+  </AuthenticatedLayout>
 </template>

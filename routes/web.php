@@ -17,21 +17,28 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', function () { return Inertia::render('Dashboard');})
+    ->middleware(['auth', 'verified'])->name('dashboard');
 
 // Lists
 Route::get('/lists', [ItemListController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('item-lists');
+Route::post('/lists', [ItemListController::class, 'store'])
+    ->middleware(['auth', 'verified'])->name('item-lists.store');
 
 // Items
-Route::get('/lists/{listId}/items', [ItemController::class, 'show'])->middleware(['auth', 'verified'])->name('item-lists.show');
+Route::get('/lists/{listId}/items', [ItemController::class, 'show'])
+    ->middleware(['auth', 'verified'])->name('item-lists.show');
+Route::post('/lists/{listId}', [ItemController::class, 'store'])
+    ->middleware(['auth', 'verified'])->name('item-lists.store');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])
+        ->name('profile.destroy');
 });
 
 require __DIR__.'/auth.php';
