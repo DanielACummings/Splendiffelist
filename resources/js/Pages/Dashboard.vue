@@ -9,16 +9,16 @@ const newListName = ref('');
 const newItemNames = ref({}); // Object to hold new item names for each list
 
 onMounted(() => {
-  loadLists();
+  loadAllLists();
 });
 
 // Lists
-function loadLists() {
+function loadAllLists() {
   axios.get('lists')
     .then(response => {
       lists.value = response.data;
       lists.value.forEach(list => {
-        newItemNames.value[list.id] = ''; // Initialize the new item name for each list
+        newItemNames.value[list.id] = '';
         getItemsByList(list.id);
       });
     })
@@ -39,12 +39,24 @@ function createList() {
 
   axios.post('/lists', { name: newListName.value })
     .then(() => {
-      loadLists();
+      loadAllLists();
       newListName.value = '';
     })
     .catch(error => {
       console.error(error);
     });
+}
+
+function deleteList(list) {
+  if (confirm(`Are you sure you want to delete ${list.name}?`)) {
+    axios.delete(`lists/${list.id}`)
+      .then(() => {
+        loadAllLists();
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
 }
 
 // Items
@@ -111,6 +123,7 @@ function deleteItem(listId, itemId) {
           <ul>
             <li v-for="list in lists" :key="list.id">
               <br/>
+              <button class="delete-button" @click="deleteList(list)">X</button>
               <span :class="{ 'crossed-out': list.crossedOut }" class="text-gray-800 dark:text-gray-200">{{ list.name }}</span>
               <form @submit.prevent="createItem(list.id)">
                 <input type="text" v-model="newItemNames[list.id]" placeholder="Enter new item name" class="text-gray-800 dark:text-gray-200" />

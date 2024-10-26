@@ -35,7 +35,8 @@ class ItemController extends Controller
         $item = Item::find($itemId);
         if ($item) {
             $item->delete();
-            return response()->json(['message' => 'Item deleted successfully'], 200);
+            return response()->json(['message' => 'Item deleted successfully'],
+                200);
         } else {
             return response()->json(['error' => 'Item not found'], 404);
         }

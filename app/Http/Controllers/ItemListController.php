@@ -24,4 +24,11 @@ class ItemListController extends Controller
         ]);
         return response()->json($itemList);
     }
+
+    public function destroy(int $id)
+    {
+        $list = ItemList::findOrFail($id);
+        $list->delete();
+        return response()->json(['message' => 'List deleted successfully']);
+    }
 }

@@ -16,15 +16,16 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
-
 Route::get('/dashboard', function () { return Inertia::render('Dashboard');})
     ->middleware(['auth', 'verified'])->name('dashboard');
 
 // Lists
 Route::get('/lists', [ItemListController::class, 'index'])
-    ->middleware(['auth', 'verified'])->name('item-lists');
+    ->middleware(['auth', 'verified'])->name('item-lists.index');
 Route::post('/lists', [ItemListController::class, 'store'])
     ->middleware(['auth', 'verified'])->name('item-lists.store');
+Route::delete('/lists/{id}', [ItemListController::class, 'destroy'])
+    ->middleware(['auth', 'verified'])->name('item-lists.destroy');
 
 // Items
 Route::get('/lists/{listId}/items', [ItemController::class, 'show'])
