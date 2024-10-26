@@ -27,6 +27,18 @@ function loadAllLists() {
     });
 }
 
+function loadList(listId) {
+  axios.get(`lists/${listId}`)
+    .then(response => {
+      const list = response.data;
+      lists.value.push(list);
+      getItemsByList(listId);
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}
+
 function createList() {
   if (newListName.value.trim() === '') {
     alert('Please enter a list name');
@@ -38,8 +50,9 @@ function createList() {
   }
 
   axios.post('/lists', { name: newListName.value })
-    .then(() => {
-      loadAllLists();
+    .then(response => {
+      const newListId = response.data.id;
+      loadList(newListId);
       newListName.value = '';
     })
     .catch(error => {
@@ -91,9 +104,6 @@ function createItem(listId) {
 
 function deleteItem(listId, itemId) {
   axios.delete(`items/${itemId}`)
-    .then(() => {
-      this.getItemsByList(listId);
-    })
     .catch(error => {
       console.error(error);
     });
@@ -119,8 +129,15 @@ function deleteItem(listId, itemId) {
           </div>
       </div>
       <div>
-          <h1 class="text-gray-800 dark:text-gray-200">Lists:</h1> 
-          <ul>
+        <form @submit.prevent="createList">
+          <button type="submit" class="text-gray-800 dark:text-gray-200">Create List</button>
+          <br/>
+          <input type="text" v-model="newListName" placeholder="Enter new list name" class="text-gray-800 dark:text-gray-200" />
+        </form>
+        <br/>
+        <br/>
+        <h1 class="text-gray-800 dark:text-gray-200">Lists:</h1> 
+        <ul>
             <li v-for="list in lists" :key="list.id">
               <br/>
               <button class="delete-button" @click="deleteList(list)">X</button>
@@ -138,10 +155,6 @@ function deleteItem(listId, itemId) {
             </li>
           </ul>
           <br/>
-          <form @submit.prevent="createList">
-            <input type="text" v-model="newListName" placeholder="Enter new list name" class="text-gray-800 dark:text-gray-200" />
-            <button type="submit" class="text-gray-800 dark:text-gray-200">Create List</button>
-          </form>
         </div>
   </AuthenticatedLayout>
 </template>

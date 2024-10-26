@@ -22,6 +22,8 @@ Route::get('/dashboard', function () { return Inertia::render('Dashboard');})
 // Lists
 Route::get('/lists', [ItemListController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('item-lists.index');
+Route::get('/lists/{id}', [ItemListController::class, 'show'])
+    ->middleware(['auth', 'verified'])->name('item-lists.show');
 Route::post('/lists', [ItemListController::class, 'store'])
     ->middleware(['auth', 'verified'])->name('item-lists.store');
 Route::delete('/lists/{id}', [ItemListController::class, 'destroy'])
