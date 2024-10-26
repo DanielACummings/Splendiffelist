@@ -34,6 +34,14 @@ class ItemListController extends Controller
         return response()->json($itemList);
     }
 
+    public function update(Request $request, int $id)
+    {
+        $itemList = ItemList::findOrFail($id);
+        $itemList->update($request->all());
+
+        return response()->json($itemList);
+    }
+
     public function destroy(int $id)
     {
         $list = ItemList::findOrFail($id);

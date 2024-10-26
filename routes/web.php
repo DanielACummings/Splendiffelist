@@ -26,6 +26,8 @@ Route::get('/lists/{id}', [ItemListController::class, 'show'])
     ->middleware(['auth', 'verified'])->name('lists.show');
 Route::post('/lists', [ItemListController::class, 'store'])
     ->middleware(['auth', 'verified'])->name('lists.store');
+Route::put('/lists/{id}', [ItemListController::class, 'update'])
+    ->middleware(['auth', 'verified'])->name('lists.update');
 Route::delete('/lists/{id}', [ItemListController::class, 'destroy'])
     ->middleware(['auth', 'verified'])->name('lists.destroy');
 
