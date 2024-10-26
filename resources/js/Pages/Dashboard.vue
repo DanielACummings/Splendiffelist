@@ -6,7 +6,7 @@ import { ref, onMounted } from 'vue';
 
 const lists = ref([]);
 const newListName = ref('');
-const newItemNames = ref({}); // Object to hold new item names for each list
+const newItemNames = ref({});
 
 onMounted(() => {
   loadAllLists();
@@ -93,7 +93,6 @@ function createItem(listId) {
 
   axios.post(`lists/${listId}`, { name: newItemName })
     .then(() => {
-      // Reload items for the list
       getItemsByList(listId);
       newItemNames.value[listId] = ''; // Clear the input after submission
     })
@@ -102,7 +101,27 @@ function createItem(listId) {
     });
 }
 
-function deleteItem(listId, itemId) {
+function updateItemName(listId, item, newName) {
+  item.editing = false;
+
+  if (item.name === newName) {
+    return
+  }
+
+  axios.put(`items/${item.id}`, { name: newName })
+    .then(() => {
+      getItemsByList(listId);
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}
+
+function crossOutItem(item) {
+  // Use same update method in ItemController?
+}
+
+function deleteItem(itemId) {
   axios.delete(`items/${itemId}`)
     .catch(error => {
       console.error(error);
@@ -141,15 +160,36 @@ function deleteItem(listId, itemId) {
             <li v-for="list in lists" :key="list.id">
               <br/>
               <button class="delete-button" @click="deleteList(list)">X</button>
-              <span :class="{ 'crossed-out': list.crossedOut }" class="text-gray-800 dark:text-gray-200">{{ list.name }}</span>
+              <span :class="{ 'crossed-out': list.crossedOut }" class="text-gray-800 dark:text-gray-200">
+                {{ list.name }}
+              </span>
               <form @submit.prevent="createItem(list.id)">
                 <input type="text" v-model="newItemNames[list.id]" placeholder="Enter new item name" class="text-gray-800 dark:text-gray-200" />
-                <button type="submit" class="text-gray-800 dark:text-gray-200">Add Item</button>
+                <button type="submit" class="text-gray-800 dark:text-gray-200">
+                  Add Item
+                </button>
               </form>
               <ul>
                 <li v-for="item in list.items" :key="item.id">
-                  <button class="delete-button" @click="deleteItem(list.id, item.id)">X</button>
-                  <span :class="{ 'crossed-out': item.crossedOut }" class="text-gray-800 dark:text-gray-200">• {{ item.name }}</span>
+                  <template v-if="item.editing">
+                    <form @submit.prevent="updateItemName(list.id, item, item.newName)">
+                      <input type="text" v-model="item.newName">
+                      <button type="submit" class="delete-button">
+                        ✔
+                      </button>
+                    </form>
+                  </template>
+                  <template v-else>
+                    <button class="delete-button" @click="deleteItem(item.id)">
+                      X
+                    </button>
+                    <span :class="{ 'crossed-out': item.crossedOut }" class="text-gray-800 dark:text-gray-200">
+                      {{ item.name }}
+                    </span>
+                    <button class="delete-button" @click="item.editing = true">
+                      Edit
+                    </button>
+                  </template>
                 </li>
               </ul>
             </li>

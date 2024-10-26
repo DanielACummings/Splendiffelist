@@ -21,21 +21,23 @@ Route::get('/dashboard', function () { return Inertia::render('Dashboard');})
 
 // Lists
 Route::get('/lists', [ItemListController::class, 'index'])
-    ->middleware(['auth', 'verified'])->name('item-lists.index');
+    ->middleware(['auth', 'verified'])->name('lists.index');
 Route::get('/lists/{id}', [ItemListController::class, 'show'])
-    ->middleware(['auth', 'verified'])->name('item-lists.show');
+    ->middleware(['auth', 'verified'])->name('lists.show');
 Route::post('/lists', [ItemListController::class, 'store'])
-    ->middleware(['auth', 'verified'])->name('item-lists.store');
+    ->middleware(['auth', 'verified'])->name('lists.store');
 Route::delete('/lists/{id}', [ItemListController::class, 'destroy'])
-    ->middleware(['auth', 'verified'])->name('item-lists.destroy');
+    ->middleware(['auth', 'verified'])->name('lists.destroy');
 
 // Items
 Route::get('/lists/{listId}/items', [ItemController::class, 'show'])
-    ->middleware(['auth', 'verified'])->name('item-lists.show');
+    ->middleware(['auth', 'verified'])->name('items.show');
 Route::post('/lists/{listId}', [ItemController::class, 'store'])
-    ->middleware(['auth', 'verified'])->name('item-lists.store');
+    ->middleware(['auth', 'verified'])->name('items.store');
+Route::put('/items/{itemId}', [ItemController::class, 'update'])
+    ->middleware(['auth', 'verified'])->name('items.update');
 Route::delete('/items/{itemId}', [ItemController::class, 'destroy'])
-    ->middleware(['auth', 'verified'])->name('item-lists.destroy');
+    ->middleware(['auth', 'verified'])->name('items.destroy');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])
