@@ -12,6 +12,7 @@ class Item extends Model
 
     // Specify the fillable attributes for mass assignment
     protected $fillable = [
+        'id',
         'name',
         'item_list_id',
         'crossed_out',

@@ -9,17 +9,30 @@ const newListName = ref('');
 const newItemNames = ref({}); // Object to hold new item names for each list
 
 onMounted(() => {
-  loadLists();
+  loadAllLists();
 });
 
-function loadLists() {
+// Lists
+function loadAllLists() {
   axios.get('lists')
     .then(response => {
       lists.value = response.data;
       lists.value.forEach(list => {
-        newItemNames.value[list.id] = ''; // Initialize the new item name for each list
+        newItemNames.value[list.id] = '';
         getItemsByList(list.id);
       });
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}
+
+function loadList(listId) {
+  axios.get(`lists/${listId}`)
+    .then(response => {
+      const list = response.data;
+      lists.value.push(list);
+      getItemsByList(listId);
     })
     .catch(error => {
       console.error(error);
@@ -37,8 +50,9 @@ function createList() {
   }
 
   axios.post('/lists', { name: newListName.value })
-    .then(() => {
-      loadLists();
+    .then(response => {
+      const newListId = response.data.id;
+      loadList(newListId);
       newListName.value = '';
     })
     .catch(error => {
@@ -46,6 +60,19 @@ function createList() {
     });
 }
 
+function deleteList(list) {
+  if (confirm(`Are you sure you want to delete ${list.name}?`)) {
+    axios.delete(`lists/${list.id}`)
+      .then(() => {
+        loadAllLists();
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+}
+
+// Items
 function getItemsByList(listId) {
   axios.get(`lists/${listId}/items`)
     .then(response => {
@@ -74,11 +101,17 @@ function createItem(listId) {
       console.error(error);
     });
 }
+
+function deleteItem(listId, itemId) {
+  axios.delete(`items/${itemId}`)
+    .catch(error => {
+      console.error(error);
+    });
+}
 </script>
 
 <template>
   <Head title="Dashboard" />
-
   <AuthenticatedLayout>
       <template #header>
           <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
@@ -96,10 +129,18 @@ function createItem(listId) {
           </div>
       </div>
       <div>
-          <h1 class="text-gray-800 dark:text-gray-200">Lists:</h1> 
-          <ul>
+        <form @submit.prevent="createList">
+          <button type="submit" class="text-gray-800 dark:text-gray-200">Create List</button>
+          <br/>
+          <input type="text" v-model="newListName" placeholder="Enter new list name" class="text-gray-800 dark:text-gray-200" />
+        </form>
+        <br/>
+        <br/>
+        <h1 class="text-gray-800 dark:text-gray-200">Lists:</h1> 
+        <ul>
             <li v-for="list in lists" :key="list.id">
               <br/>
+              <button class="delete-button" @click="deleteList(list)">X</button>
               <span :class="{ 'crossed-out': list.crossedOut }" class="text-gray-800 dark:text-gray-200">{{ list.name }}</span>
               <form @submit.prevent="createItem(list.id)">
                 <input type="text" v-model="newItemNames[list.id]" placeholder="Enter new item name" class="text-gray-800 dark:text-gray-200" />
@@ -107,16 +148,26 @@ function createItem(listId) {
               </form>
               <ul>
                 <li v-for="item in list.items" :key="item.id">
+                  <button class="delete-button" @click="deleteItem(list.id, item.id)">X</button>
                   <span :class="{ 'crossed-out': item.crossedOut }" class="text-gray-800 dark:text-gray-200">• {{ item.name }}</span>
                 </li>
               </ul>
             </li>
           </ul>
           <br/>
-          <form @submit.prevent="createList">
-            <input type="text" v-model="newListName" placeholder="Enter new list name" class="text-gray-800 dark:text-gray-200" />
-            <button type="submit" class="text-gray-800 dark:text-gray-200">Create List</button>
-          </form>
         </div>
   </AuthenticatedLayout>
 </template>
+
+<style>
+.delete-button {
+  font-size: 12px;
+  padding: 2px 4px;
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-right: 5px;
+}
+</style>
