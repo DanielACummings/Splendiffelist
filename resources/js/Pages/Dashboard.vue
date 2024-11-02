@@ -10,9 +10,6 @@ const newItemNames = ref({});
 
 onMounted(() => {
   loadAllLists();
-  console.log(lists);
-  console.log(newItemNames);
-  console.log(newListName);
 });
 
 // Lists
@@ -71,8 +68,6 @@ function updateListName(list) {
     return;
   }
 
-  console.log(newName + '\n' + list.id + '\n' + list.name);
-
   axios.put(`lists/${list.id}`, { name: newName })
     .then(() => {
       list.name = newName;
@@ -124,7 +119,9 @@ function createItem(listId) {
     });
 }
 
-function updateItemName(listId, item, newName) {
+function updateItem(listId, item, newName = null, crossedOut = null) {
+  console.log(crossedOut)
+  console.log(item.crossed_out)
   item.editing = false;
   if (item.name === newName) {
     alert('Name entered matches the existing name')
@@ -132,17 +129,25 @@ function updateItemName(listId, item, newName) {
     return
   }
 
-  axios.put(`items/${item.id}`, { name: newName })
+  const updates = {};
+  if (newName) {
+    updates.name = newName;
+    newName = null;
+  }
+  if (crossedOut !== null) {
+    updates.crossed_out = item.crossed_out = !crossedOut;
+    console.log(updates.crossed_out)
+  }
+
+  axios.put(`items/${item.id}`, updates)
     .then(() => {
       getItemsByList(listId);
     })
     .catch(error => {
       console.error(error);
     });
-}
-
-function crossOutItem(item) {
-  // Use same update method in ItemController?
+  
+  console.log(item.crossed_out)
 }
 
 function deleteItem(itemId, listId) {
@@ -160,13 +165,17 @@ function deleteItem(itemId, listId) {
   <Head title="Dashboard" />
   <AuthenticatedLayout>
     <template #header>
-      <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
+      <h2
+        class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200"
+      >
         Dashboard
       </h2>
     </template>
     <div class="py-12">
       <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
+        <div
+          class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800"
+        >
           <div class="p-6 text-gray-900 dark:text-gray-100">
             You're logged in!
           </div>
@@ -188,11 +197,14 @@ function deleteItem(itemId, listId) {
         <li v-for="list in lists" :key="list.id">
           <br/>
           <button class="delete-button" @click="deleteList(list)">X</button>
-          <span :class="{ 'crossed-out': list.crossedOut }" class="text-gray-800 dark:text-gray-200">
+          <span :class="{ 'crossed-out': list.crossed_out }" class="text-gray-800 dark:text-gray-200">
             {{ list.name }}
           </span>
           <form @submit.prevent="updateListName(list)">
-            <input type="text" v-model="list.newName" placeholder="Enter updated list name">
+            <input type="text"
+              v-model="list.newName"
+              placeholder="Enter updated list name"
+            >
             <button type="submit" class="delete-button">Update list name</button>
           </form>
           <form @submit.prevent="createItem(list.id)">
@@ -204,16 +216,21 @@ function deleteItem(itemId, listId) {
           <ul>
             <li v-for="item in list.items" :key="item.id">
               <template v-if="item.editing">
-                <form @submit.prevent="updateItemName(list.id, item, item.newName)">
+                <form @submit.prevent="updateItem(list.id, item, item.newName)">
                   <input type="text" v-model="item.newName" autofocus>
                   <button type="submit" class="delete-button">✔</button>
                 </form>
               </template>
               <template v-else>
-                <button class="delete-button" @click="deleteItem(item.id, list.id)">
+                <button class="delete-button"
+                  @click="deleteItem(item.id, list.id)"
+                >
                   X
                 </button>
-                <span :class="{ 'crossed-out': item.crossedOut }" class="text-gray-800 dark:text-gray-200">
+                <span :class="{ 'text-red': item.crossed_out === 1 }"
+                  class="text-gray-800 dark:text-gray-200"
+                  @click="updateItem(list.id, item, null, item.crossed_out)"
+                >
                   {{ item.name }}
                 </span>
                 <button class="delete-button" @click="item.editing = true">
