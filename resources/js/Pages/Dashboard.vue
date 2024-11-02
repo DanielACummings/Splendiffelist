@@ -145,8 +145,11 @@ function crossOutItem(item) {
   // Use same update method in ItemController?
 }
 
-function deleteItem(itemId) {
+function deleteItem(itemId, listId) {
   axios.delete(`items/${itemId}`)
+    .then(() => {
+      getItemsByList(listId);
+    })
     .catch(error => {
       console.error(error);
     });
@@ -202,12 +205,12 @@ function deleteItem(itemId) {
             <li v-for="item in list.items" :key="item.id">
               <template v-if="item.editing">
                 <form @submit.prevent="updateItemName(list.id, item, item.newName)">
-                  <input type="text" v-model="item.newName">
+                  <input type="text" v-model="item.newName" autofocus>
                   <button type="submit" class="delete-button">✔</button>
                 </form>
               </template>
               <template v-else>
-                <button class="delete-button" @click="deleteItem(item.id)">
+                <button class="delete-button" @click="deleteItem(item.id, list.id)">
                   X
                 </button>
                 <span :class="{ 'crossed-out': item.crossedOut }" class="text-gray-800 dark:text-gray-200">
