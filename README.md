@@ -6,8 +6,10 @@ Functionality
 - Make input fields just small enough to fit placeholder text then expand them as user types?
 
 UI
+- Use multiple columns of lists
+    - Mobile: 1 column when vertical, 2 columns when horizontal
+    - Desktop: 4 columns max
 - Make text visible while typing in input fields
-- Use multiple rows of lists
 - Make give input fields grey background?
 - Make delete & edit buttons smaller
 - Add vertical padding between items
