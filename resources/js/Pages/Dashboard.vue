@@ -166,7 +166,11 @@ function deleteItem(itemId, listId) {
   <AuthenticatedLayout>
     <template #header>
       <h2
-        class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200"
+        class="text-xl
+          font-semibold
+          leading-tight
+          text-gray-800
+          dark:text-gray-200"
       >
         Dashboard
       </h2>
@@ -174,7 +178,11 @@ function deleteItem(itemId, listId) {
     <div class="py-12">
       <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div
-          class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800"
+          class="overflow-hidden
+            rounded-lg
+            g-white shadow-sm
+            sm:rounded-lg
+            dark:bg-gray-800"
         >
           <div class="p-6 text-gray-900 dark:text-gray-100">
             You're logged in!
@@ -184,11 +192,17 @@ function deleteItem(itemId, listId) {
     </div>
     <div>
       <form @submit.prevent="createList">
-        <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+        <button type="submit"
+          class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+        >
           Add List
         </button>
         <br/>
-        <input type="text" v-model="newListName" placeholder="Enter new list name" class="text-gray-800 dark:text-gray-200" />
+        <input type="text"
+          v-model="newListName"
+          placeholder="Enter new list name"
+          class="text-gray-800 dark:text-gray-200"
+        />
       </form>
       <br/>
       <br/>
@@ -196,7 +210,16 @@ function deleteItem(itemId, listId) {
       <ul>
         <li v-for="list in lists" :key="list.id">
           <br/>
-          <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600" @click="deleteList(list)">X</button>
+          <button class="bg-red-500
+            text-white
+            px-4
+            py-2
+            rounded
+            hover:bg-red-600"
+            @click="deleteList(list)"
+          >
+            X
+          </button>
           <span :class="{ 'crossed-out': list.crossed_out }"
             class="text-gray-800 dark:text-gray-200"
           >
@@ -207,13 +230,33 @@ function deleteItem(itemId, listId) {
               v-model="list.newName"
               placeholder="Enter updated list name"
             >
-            <button type="submit" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
+            <button type="submit"
+              class="bg-yellow-500
+                text-white
+                px-4
+                py-2
+                rounded
+                hover:bg-yellow-600"
+            >
               Update list name
             </button>
           </form>
           <form @submit.prevent="createItem(list.id)">
-            <input type="text" v-model="newItemNames[list.id]" placeholder="Enter new item name" class="text-gray-800 dark:text-gray-200" />
-            <button type="submit" class="text-gray-800 dark:text-gray-200 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" >
+            <input type="text"
+              v-model="newItemNames[list.id]"
+              placeholder="Enter new item name"
+              class="text-gray-800 dark:text-gray-200"
+            />
+            <button type="submit"
+              class="text-gray-800
+                dark:text-gray-200
+                bg-green-500
+                text-white
+                px-4
+                py-2
+                rounded
+                hover:bg-green-600"
+            >
               Add Item
             </button>
           </form>
@@ -222,11 +265,26 @@ function deleteItem(itemId, listId) {
               <template v-if="item.editing">
                 <form @submit.prevent="updateItem(list.id, item, item.newName)">
                   <input type="text" v-model="item.newName" autofocus>
-                  <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">✔</button>
+                  <button
+                    type="submit"
+                    class="bg-red-500
+                      text-white
+                      px-4
+                      py-2
+                      rounded
+                      hover:bg-red-600"
+                  >
+                    ✔
+                  </button>
                 </form>
               </template>
               <template v-else>
-                <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                <button class="bg-red-500
+                  text-white
+                  px-4
+                  py-2
+                  rounded
+                  hover:bg-red-600"
                   @click="deleteItem(item.id, list.id)"
                 >
                   X
@@ -237,7 +295,14 @@ function deleteItem(itemId, listId) {
                 >
                   {{ item.name }}
                 </span>
-                <button class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600" @click="item.editing = true">
+                <button class="bg-yellow-500
+                  text-white
+                  px-4
+                  py-2
+                  rounded
+                  hover:bg-yellow-600"
+                  @click="item.editing = true"
+                >
                   Edit
                 </button>
               </template>
