@@ -31,6 +31,14 @@ class ItemController extends Controller
             201);
     }
 
+    public function update(Request $request, int $itemId)
+    {
+        $item = Item::findOrFail($itemId);
+        $item->update($request->all());
+
+        return response()->json($item);
+    }
+
     public function destroy($itemId)
     {
         $item = Item::find($itemId);

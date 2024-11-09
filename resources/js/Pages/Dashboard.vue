@@ -6,7 +6,7 @@ import { ref, onMounted } from 'vue';
 
 const lists = ref([]);
 const newListName = ref('');
-const newItemNames = ref({}); // Object to hold new item names for each list
+const newItemNames = ref({});
 
 onMounted(() => {
   loadAllLists();
@@ -60,8 +60,35 @@ function createList() {
     });
 }
 
+function updateList(list, newName = null, crossedOut = null) {
+  list.editing = false;
+  if (list.name === newName) {
+    alert('Name entered matches the existing name')
+
+    return;
+  }
+
+  const updates = {};
+  if (newName) {
+    updates.name = newName;
+  }
+  if (crossedOut !== null) {
+    updates.crossed_out = list.crossed_out = !crossedOut;
+  }
+
+  axios.put(`lists/${list.id}`, updates)
+    .then(() => {
+      if (newName) {
+        list.name = newName;
+      }
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}
+
 function deleteList(list) {
-  if (confirm(`Are you sure you want to delete ${list.name}?`)) {
+  if (confirm(`Are you sure you want to delete the "${list.name}" list?`)) {
     axios.delete(`lists/${list.id}`)
       .then(() => {
         loadAllLists();
@@ -88,12 +115,12 @@ function createItem(listId) {
   const newItemName = newItemNames.value[listId].trim();
   if (newItemName === '') {
     alert('Please enter a list item name');
+
     return;
   }
 
   axios.post(`lists/${listId}`, { name: newItemName })
     .then(() => {
-      // Reload items for the list
       getItemsByList(listId);
       newItemNames.value[listId] = ''; // Clear the input after submission
     })
@@ -102,8 +129,37 @@ function createItem(listId) {
     });
 }
 
-function deleteItem(listId, itemId) {
+function updateItem(listId, item, newName = null, crossedOut = null) {
+  item.editing = false;
+  if (item.name === newName) {
+    alert('Name entered matches the existing name')
+
+    return
+  }
+
+  const updates = {};
+  if (newName) {
+    updates.name = newName;
+  }
+  if (crossedOut !== null) {
+    updates.crossed_out = item.crossed_out = !crossedOut;
+  }
+
+  axios.put(`items/${item.id}`, updates)
+    .then(() => {
+      getItemsByList(listId);
+    })
+    .catch(error => {
+      console.error(error);
+    });
+  
+}
+
+function deleteItem(itemId, listId) {
   axios.delete(`items/${itemId}`)
+    .then(() => {
+      getItemsByList(listId);
+    })
     .catch(error => {
       console.error(error);
     });
@@ -113,61 +169,156 @@ function deleteItem(listId, itemId) {
 <template>
   <Head title="Dashboard" />
   <AuthenticatedLayout>
-      <template #header>
-          <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-              Dashboard
-          </h2>
-      </template>
-
-      <div class="py-12">
-          <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-              <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
-                  <div class="p-6 text-gray-900 dark:text-gray-100">
-                      You're logged in!
-                  </div>
-              </div>
-          </div>
-      </div>
-      <div>
-        <form @submit.prevent="createList">
-          <button type="submit" class="text-gray-800 dark:text-gray-200">Create List</button>
-          <br/>
-          <input type="text" v-model="newListName" placeholder="Enter new list name" class="text-gray-800 dark:text-gray-200" />
-        </form>
-        <br/>
-        <br/>
-        <h1 class="text-gray-800 dark:text-gray-200">Lists:</h1> 
-        <ul>
-            <li v-for="list in lists" :key="list.id">
-              <br/>
-              <button class="delete-button" @click="deleteList(list)">X</button>
-              <span :class="{ 'crossed-out': list.crossedOut }" class="text-gray-800 dark:text-gray-200">{{ list.name }}</span>
-              <form @submit.prevent="createItem(list.id)">
-                <input type="text" v-model="newItemNames[list.id]" placeholder="Enter new item name" class="text-gray-800 dark:text-gray-200" />
-                <button type="submit" class="text-gray-800 dark:text-gray-200">Add Item</button>
-              </form>
-              <ul>
-                <li v-for="item in list.items" :key="item.id">
-                  <button class="delete-button" @click="deleteItem(list.id, item.id)">X</button>
-                  <span :class="{ 'crossed-out': item.crossedOut }" class="text-gray-800 dark:text-gray-200">• {{ item.name }}</span>
-                </li>
-              </ul>
+    <template #header>
+      <h2
+        class="text-xl
+          font-semibold
+          leading-tight
+          text-gray-800
+          dark:text-gray-200"
+      >
+        Dashboard
+      </h2>
+    </template>
+    <div>
+      <br/>
+      <h1 class="text-gray-800 dark:text-gray-200">New list:</h1>
+      <br/>
+      <form @submit.prevent="createList">
+        <button type="submit"
+          class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+        >
+          +
+        </button>
+        <input type="text"
+          v-model="newListName"
+          placeholder="List name"
+          class="text-gray-800 dark:text-gray-200"
+        />
+      </form>
+      <br/>
+      <br/>
+      <h1 class="text-gray-800 dark:text-gray-200">Lists:</h1> 
+      <ul>
+        <li v-for="list in lists" :key="list.id">
+          <template v-if="list.editing">
+            <form
+              @submit.prevent="updateList(list, list.newName, null)"
+            >
+              <input type="text" v-model="list.newName" autofocus
+                placeholder="List name"
+              >
+              <button type="submit"
+                class="bg-yellow-500
+                  text-white
+                  px-4
+                  py-2
+                  rounded
+                  hover:bg-yellow-600"
+              >
+                ✔
+              </button>
+            </form>
+          </template>
+          <template v-else>
+            <button class="bg-red-500
+              text-white
+              px-4
+              py-2
+              rounded
+              hover:bg-red-600"
+              @click="deleteList(list)"
+            >
+              x
+            </button>
+            <button class="bg-yellow-500
+              text-white
+              px-4
+              py-2
+              rounded
+              hover:bg-yellow-600"
+              @click="list.editing = true"
+            >
+              ✎
+            </button>
+            <span :class="{ 'line-through': list.crossed_out }"
+              class="text-gray-800 dark:text-gray-200"
+              @click="updateList(list, null, list.crossed_out)"
+            >
+              {{ list.name }}
+            </span>
+          </template>
+          <form @submit.prevent="createItem(list.id)">
+            <button type="submit"
+              class="text-gray-800
+                dark:text-gray-200
+                bg-green-500
+                text-white
+                px-4
+                py-2
+                rounded
+                hover:bg-green-600"
+            >
+              +
+            </button>
+            <input type="text"
+              v-model="newItemNames[list.id]"
+              placeholder="Item name"
+              class="text-gray-800 dark:text-gray-200"
+            />
+          </form>
+          <ul>
+            <li v-for="item in list.items" :key="item.id">
+              <template v-if="item.editing">
+                <form @submit.prevent="updateItem(list.id, item, item.newName)">
+                  <input type="text" v-model="item.newName" autofocus>
+                  <button
+                    type="submit"
+                    class="bg-yellow-500
+                      text-white
+                      px-4
+                      py-2
+                      rounded
+                      hover:bg-yellow-600"
+                  >
+                    ✔
+                  </button>
+                </form>
+              </template>
+              <template v-else>
+                <button class="bg-red-500
+                  text-white
+                  px-4
+                  py-2
+                  rounded
+                  hover:bg-red-600"
+                  @click="deleteItem(item.id, list.id)"
+                >
+                  x
+                </button>
+                <button class="bg-yellow-500
+                  text-white
+                  px-4
+                  py-2
+                  rounded
+                  hover:bg-yellow-600"
+                  @click="item.editing = true"
+                >
+                  ✎
+                </button>
+                <span :class="{ 'line-through': item.crossed_out }"
+                  class="text-gray-800 dark:text-gray-200"
+                  @click="updateItem(list.id, item, null, item.crossed_out)"
+                >
+                  {{ item.name }}
+                </span>
+              </template>
             </li>
           </ul>
           <br/>
-        </div>
+        </li>
+      </ul>
+      <br/>
+    </div>
   </AuthenticatedLayout>
 </template>
-
-<style>
-.delete-button {
-  font-size: 12px;
-  padding: 2px 4px;
-  background-color: red;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  margin-right: 5px;
-}
-</style>
