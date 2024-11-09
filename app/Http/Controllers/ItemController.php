@@ -31,9 +31,9 @@ class ItemController extends Controller
             201);
     }
 
-    public function update(Request $request, $itemId)
+    public function update(Request $request, int $itemId)
     {
-        $item = Item::find($itemId);
+        $item = Item::findOrFail($itemId);
         $item->update($request->all());
 
         return response()->json($item);

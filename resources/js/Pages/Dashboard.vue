@@ -60,17 +60,27 @@ function createList() {
     });
 }
 
-function updateListName(list) {
-  const newName = list.newName.trim();
-  if (newName === list.name) {
+function updateList(list, newName = null, crossedOut = null) {
+  list.editing = false;
+  if (list.name === newName) {
     alert('Name entered matches the existing name')
 
     return;
   }
 
-  axios.put(`lists/${list.id}`, { name: newName })
+  const updates = {};
+  if (newName) {
+    updates.name = newName;
+  }
+  if (crossedOut !== null) {
+    updates.crossed_out = list.crossed_out = !crossedOut;
+  }
+
+  axios.put(`lists/${list.id}`, updates)
     .then(() => {
-      list.name = newName;
+      if (newName) {
+        list.name = newName;
+      }
     })
     .catch(error => {
       console.error(error);
@@ -78,7 +88,7 @@ function updateListName(list) {
 }
 
 function deleteList(list) {
-  if (confirm(`Are you sure you want to delete ${list.name}?`)) {
+  if (confirm(`Are you sure you want to delete the "${list.name}" list?`)) {
     axios.delete(`lists/${list.id}`)
       .then(() => {
         loadAllLists();
@@ -120,8 +130,6 @@ function createItem(listId) {
 }
 
 function updateItem(listId, item, newName = null, crossedOut = null) {
-  console.log(crossedOut)
-  console.log(item.crossed_out)
   item.editing = false;
   if (item.name === newName) {
     alert('Name entered matches the existing name')
@@ -132,11 +140,9 @@ function updateItem(listId, item, newName = null, crossedOut = null) {
   const updates = {};
   if (newName) {
     updates.name = newName;
-    newName = null;
   }
   if (crossedOut !== null) {
     updates.crossed_out = item.crossed_out = !crossedOut;
-    console.log(updates.crossed_out)
   }
 
   axios.put(`items/${item.id}`, updates)
@@ -147,7 +153,6 @@ function updateItem(listId, item, newName = null, crossedOut = null) {
       console.error(error);
     });
   
-  console.log(item.crossed_out)
 }
 
 function deleteItem(itemId, listId) {
@@ -175,32 +180,19 @@ function deleteItem(itemId, listId) {
         Dashboard
       </h2>
     </template>
-    <div class="py-12">
-      <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <div
-          class="overflow-hidden
-            rounded-lg
-            g-white shadow-sm
-            sm:rounded-lg
-            dark:bg-gray-800"
-        >
-          <div class="p-6 text-gray-900 dark:text-gray-100">
-            You're logged in!
-          </div>
-        </div>
-      </div>
-    </div>
     <div>
+      <br/>
+      <h1 class="text-gray-800 dark:text-gray-200">New list:</h1>
+      <br/>
       <form @submit.prevent="createList">
         <button type="submit"
           class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
         >
-          Add List
+          +
         </button>
-        <br/>
         <input type="text"
           v-model="newListName"
-          placeholder="Enter new list name"
+          placeholder="List name"
           class="text-gray-800 dark:text-gray-200"
         />
       </form>
@@ -209,44 +201,54 @@ function deleteItem(itemId, listId) {
       <h1 class="text-gray-800 dark:text-gray-200">Lists:</h1> 
       <ul>
         <li v-for="list in lists" :key="list.id">
-          <br/>
-          <button class="bg-red-500
-            text-white
-            px-4
-            py-2
-            rounded
-            hover:bg-red-600"
-            @click="deleteList(list)"
-          >
-            X
-          </button>
-          <span :class="{ 'crossed-out': list.crossed_out }"
-            class="text-gray-800 dark:text-gray-200"
-          >
-            {{ list.name }}
-          </span>
-          <form @submit.prevent="updateListName(list)">
-            <input type="text"
-              v-model="list.newName"
-              placeholder="Enter updated list name"
+          <template v-if="list.editing">
+            <form
+              @submit.prevent="updateList(list, list.newName, null)"
             >
-            <button type="submit"
-              class="bg-yellow-500
-                text-white
-                px-4
-                py-2
-                rounded
-                hover:bg-yellow-600"
+              <input type="text" v-model="list.newName" autofocus
+                placeholder="List name"
+              >
+              <button type="submit"
+                class="bg-yellow-500
+                  text-white
+                  px-4
+                  py-2
+                  rounded
+                  hover:bg-yellow-600"
+              >
+                ✔
+              </button>
+            </form>
+          </template>
+          <template v-else>
+            <button class="bg-red-500
+              text-white
+              px-4
+              py-2
+              rounded
+              hover:bg-red-600"
+              @click="deleteList(list)"
             >
-              Update list name
+              x
             </button>
-          </form>
-          <form @submit.prevent="createItem(list.id)">
-            <input type="text"
-              v-model="newItemNames[list.id]"
-              placeholder="Enter new item name"
+            <button class="bg-yellow-500
+              text-white
+              px-4
+              py-2
+              rounded
+              hover:bg-yellow-600"
+              @click="list.editing = true"
+            >
+              ✎
+            </button>
+            <span :class="{ 'line-through': list.crossed_out }"
               class="text-gray-800 dark:text-gray-200"
-            />
+              @click="updateList(list, null, list.crossed_out)"
+            >
+              {{ list.name }}
+            </span>
+          </template>
+          <form @submit.prevent="createItem(list.id)">
             <button type="submit"
               class="text-gray-800
                 dark:text-gray-200
@@ -257,8 +259,13 @@ function deleteItem(itemId, listId) {
                 rounded
                 hover:bg-green-600"
             >
-              Add Item
+              +
             </button>
+            <input type="text"
+              v-model="newItemNames[list.id]"
+              placeholder="Item name"
+              class="text-gray-800 dark:text-gray-200"
+            />
           </form>
           <ul>
             <li v-for="item in list.items" :key="item.id">
@@ -267,12 +274,12 @@ function deleteItem(itemId, listId) {
                   <input type="text" v-model="item.newName" autofocus>
                   <button
                     type="submit"
-                    class="bg-red-500
+                    class="bg-yellow-500
                       text-white
                       px-4
                       py-2
                       rounded
-                      hover:bg-red-600"
+                      hover:bg-yellow-600"
                   >
                     ✔
                   </button>
@@ -287,14 +294,8 @@ function deleteItem(itemId, listId) {
                   hover:bg-red-600"
                   @click="deleteItem(item.id, list.id)"
                 >
-                  X
+                  x
                 </button>
-                <span :class="{ 'line-through': item.crossed_out == true }"
-                  class="text-gray-800 dark:text-gray-200"
-                  @click="updateItem(list.id, item, null, item.crossed_out)"
-                >
-                  {{ item.name }}
-                </span>
                 <button class="bg-yellow-500
                   text-white
                   px-4
@@ -303,11 +304,18 @@ function deleteItem(itemId, listId) {
                   hover:bg-yellow-600"
                   @click="item.editing = true"
                 >
-                  Edit
+                  ✎
                 </button>
+                <span :class="{ 'line-through': item.crossed_out }"
+                  class="text-gray-800 dark:text-gray-200"
+                  @click="updateItem(list.id, item, null, item.crossed_out)"
+                >
+                  {{ item.name }}
+                </span>
               </template>
             </li>
           </ul>
+          <br/>
         </li>
       </ul>
       <br/>

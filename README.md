@@ -1,3 +1,30 @@
+# Future Improvements for Users
+Functionality
+- Display list edit name field only after edit button is clicked
+- Prepopulate item & list edit name fields with the existing name
+- Make input fields just small enough to fit placeholder text then expand them as user types?
+
+UI
+- Use multiple rows of lists
+- Make give input fields grey background?
+- Make delete & edit buttons smaller
+- Add vertical padding between items
+- Add padding between buttons & input fields
+- Add padding between buttons & names of lists & items
+- Make pencil & plus signs larger
+- Make add & edit buttons the same size
+
+# Bugs
+- No warning displayed when new item name matches original
+
+# Code Refactoring
+- Check if list exists prior to creating an item for it
+- Create List component
+- Cleanly reuse UI & logic for List & Item editing
+- Create Item component?
+- Stop using underscores in web app variable names while continuing to use them in SQL
+- Only get a single item after it's updated rather than all items for the list
+
 # Setup
 - composer create-project laravel/laravel SplendifeList-LaravelAndVue
 - cd SplendifeList-LaravelAndVue
