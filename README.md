@@ -1,10 +1,12 @@
 # Future Improvements for Users
 Functionality
+- User has to click in edit field for new items to start typing
 - Display list edit name field only after edit button is clicked
 - Prepopulate item & list edit name fields with the existing name
 - Make input fields just small enough to fit placeholder text then expand them as user types?
 
 UI
+- Make text visible while typing in input fields
 - Use multiple rows of lists
 - Make give input fields grey background?
 - Make delete & edit buttons smaller
@@ -17,7 +19,7 @@ UI
 # Bugs
 - No warning displayed when new item name matches original
 
-# Code Refactoring
+# Code Design & Refactoring
 - Check if list exists prior to creating an item for it
 - Create List component
 - Cleanly reuse UI & logic for List & Item editing
