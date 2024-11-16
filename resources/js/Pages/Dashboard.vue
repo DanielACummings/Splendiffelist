@@ -168,7 +168,7 @@ function deleteItem(itemId, listId) {
 
 // Custom CSS classes
 const customButton = computed(() => {
-  return 'text-white py-1 rounded-full mb-1 mt-1 mr-1';
+  return 'text-gray-800 py-1 rounded-full mb-1 mt-1 mr-1';
 });
 const addButton = computed(() => {
   return `${customButton.value} bg-green-500 hover:bg-green-600 text-sm px-1`;
@@ -183,7 +183,7 @@ const standardText = computed(() => {
   return 'text-gray-800 dark:text-gray-200';
 });
 const inputFieldStyling = computed(() => {
-  return 'bg-gray-800 dark:bg-gray-800';
+  return 'bg-gray-800 dark:bg-gray-800 mb-1';
 });
 </script>
 
@@ -201,22 +201,16 @@ const inputFieldStyling = computed(() => {
       </h2>
     </template>
     <div>
-      <br/>
-      <h1 :class="standardText">New list:</h1>
-      <br/>
       <form @submit.prevent="createList">
-        <button type="submit" :class="addButton">
+        <button type="submit" :class="addButton" class="mt-4">
           ➕
         </button>
         <input type="text"
           v-model="newListName"
-          placeholder="List name"
+          placeholder="Enter new list name"
           :class="[standardText, inputFieldStyling]"
         />
       </form>
-      <br/>
-      <br/>
-      <h1 :class="standardText">Lists:</h1> 
       <br/>
       <ul>
         <li v-for="list in lists" :key="list.id">
@@ -224,6 +218,7 @@ const inputFieldStyling = computed(() => {
             <form @submit.prevent="updateList(list, list.newName, null)">
               <input type="text" v-model="list.newName" autofocus
                 placeholder="List name"
+                :class="[standardText, inputFieldStyling]"
               >
               <button type="submit" :class="editButton">
                 ✔
@@ -231,17 +226,18 @@ const inputFieldStyling = computed(() => {
             </form>
           </template>
           <template v-else>
-            <button :class="deleteButton" @click="deleteList(list)">
-              x
-            </button>
-            <button :class="editButton" @click="list.editing = true">
-              ✎
-            </button>
             <span @click="updateList(list, null, list.crossed_out)"
               :class="[{ 'line-through': list.crossed_out }, standardText]"
+              class="mr-2"
             >
               {{ list.name }}
             </span>
+            <button :class="editButton" @click="list.editing = true">
+              ✎
+            </button>
+            <button :class="deleteButton" @click="deleteList(list)">
+              x
+            </button>
           </template>
           <form @submit.prevent="createItem(list.id)">
             <button type="submit" :class="addButton">

@@ -1,19 +1,17 @@
 # Future Improvements for Users
 Functionality
-- User has to click in edit field for new items to start typing
-- Display list edit name field only after edit button is clicked
-- Prepopulate item & list edit name fields with the existing name
-- Make input fields just small enough to fit placeholder text then expand them as user types?
+- Keep user from having to click in edit fields to start typing for items & lists
 
 UI
+- Center list names in their column?
+- Add margin or padding to right of screen
 - Use multiple columns of lists
     - Mobile: 1 column when vertical, 2 columns when horizontal
     - Desktop: 4 columns max
-- Make text visible while typing in input fields
-- Add vertical padding between items
-- Add padding between buttons & input fields
-- Add padding between buttons & names of lists & items
-- Make hovering nav bar with list names so users can jump to any list with a single click/tap
+- Put delete & edit buttons to the right of list names with the edit button closest to the list name?
+- Display list edit name field only after edit button is clicked
+- Prepopulate item & list edit name fields with the existing name
+- Make input fields just small enough to fit placeholder text then expand them as user types?
 
 # Bugs
 - No warning displayed when new item name matches original
