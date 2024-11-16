@@ -6,21 +6,18 @@ Functionality
 - Make input fields just small enough to fit placeholder text then expand them as user types?
 
 UI
-- Make hovering nav bar with list names so users can jump to any list with a single click/tap
 - Use multiple columns of lists
     - Mobile: 1 column when vertical, 2 columns when horizontal
     - Desktop: 4 columns max
 - Make text visible while typing in input fields
-- Make give input fields grey background?
-- Make delete & edit buttons smaller
 - Add vertical padding between items
 - Add padding between buttons & input fields
 - Add padding between buttons & names of lists & items
-- Make pencil & plus signs larger
-- Make add & edit buttons the same size
+- Make hovering nav bar with list names so users can jump to any list with a single click/tap
 
 # Bugs
 - No warning displayed when new item name matches original
+- Lists & items display to all users regardless of who created them
 
 # Code Design & Refactoring
 - Check if list exists prior to creating an item for it

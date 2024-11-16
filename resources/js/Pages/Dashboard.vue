@@ -167,20 +167,23 @@ function deleteItem(itemId, listId) {
 }
 
 // Custom CSS classes
+const customButton = computed(() => {
+  return 'text-white py-1 rounded-full mb-1 mt-1 mr-1';
+});
 const addButton = computed(() => {
-  return 'bg-green-500 hover:bg-green-600 text-white text-sm px-1 py-1' +
-    ' rounded-full';
+  return `${customButton.value} bg-green-500 hover:bg-green-600 text-sm px-1`;
 });
 const editButton = computed(() => {
-  return 'bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1' +
-    ' rounded-full';
+  return `${customButton.value} bg-yellow-500 hover:bg-yellow-600 px-2`;
 });
 const deleteButton = computed(() => {
-  return 'bg-red-500 hover:bg-red-600 text-white px-2 py-1' +
-    ' rounded-full';
+  return `${customButton.value} bg-red-500 hover:bg-red-600 px-2`;
 });
 const standardText = computed(() => {
   return 'text-gray-800 dark:text-gray-200';
+});
+const inputFieldStyling = computed(() => {
+  return 'bg-gray-800 dark:bg-gray-800';
 });
 </script>
 
@@ -208,7 +211,7 @@ const standardText = computed(() => {
         <input type="text"
           v-model="newListName"
           placeholder="List name"
-          :class="standardText"
+          :class="[standardText, inputFieldStyling]"
         />
       </form>
       <br/>
@@ -247,7 +250,7 @@ const standardText = computed(() => {
             <input type="text"
               v-model="newItemNames[list.id]"
               placeholder="Item name"
-              :class="standardText"
+              :class="[standardText, inputFieldStyling]"
             />
           </form>
           <ul>
