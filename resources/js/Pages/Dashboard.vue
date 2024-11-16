@@ -200,7 +200,7 @@ const inputFieldStyling = computed(() => {
         Dashboard
       </h2>
     </template>
-    <div>
+    <div class="ml-3">
       <form @submit.prevent="createList">
         <button type="submit" :class="addButton" class="mt-5">
           ➕
@@ -212,7 +212,9 @@ const inputFieldStyling = computed(() => {
         />
       </form>
       <br/>
-      <ul>
+      <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4
+        gap-4"
+      >
         <li v-for="list in lists" :key="list.id">
           <template v-if="list.editing">
             <form @submit.prevent="updateList(list, list.newName, null)">
@@ -234,7 +236,7 @@ const inputFieldStyling = computed(() => {
             </button>
             <span @click="updateList(list, null, list.crossed_out)"
               :class="[{ 'line-through': list.crossed_out }, standardText]"
-              class="mr-2"
+              class="text-wrap break-words mr-2"
             >
               {{ list.name }}
             </span>
@@ -253,8 +255,8 @@ const inputFieldStyling = computed(() => {
             <li v-for="item in list.items" :key="item.id">
               <template v-if="item.editing">
                 <form @submit.prevent="updateItem(list.id, item, { newName: item.newName })">
-                  <input type="text" v-model="item.newName" autofocus>
-                  <button type="submit" class="editButton">
+                  <input :class="[standardText, inputFieldStyling]" type="text" v-model="item.newName" autofocus>
+                  <button type="submit" :class="editButton">
                     ✔
                   </button>
                 </form>
@@ -271,6 +273,7 @@ const inputFieldStyling = computed(() => {
                 <span @click="updateItem(list.id, item,
                   { crossedOut:item.crossed_out })"
                   :class="[{ 'line-through': item.crossed_out }, standardText]"
+                  class="text-wrap break-words"
                 >
                   {{ item.name }}
                 </span>

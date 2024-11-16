@@ -1,30 +1,55 @@
-# Future Improvements for Users
-Functionality
-- Keep user from having to click in edit fields to start typing for items & lists
-
-UI
-- Use multiple columns of lists
-    - Mobile: 1 column when vertical, 2 columns when horizontal
-    - Desktop: 4 columns max
-- Remove lower half of nav bar?
-- Center list names in their column?
-- Add margin or padding to left of screen
-- Put delete & edit buttons to the right of list names with the edit button closest to the list name?
-- Display list edit name field only after edit button is clicked
-- Prepopulate item & list edit name fields with the existing name
-- Make input fields just small enough to fit placeholder text then expand them as user types?
-
 # Bugs
-- No warning displayed when new item name matches original
 - Lists & items display to all users regardless of who created them
+- No warning displayed when new item name matches original. Throws error instead
+- Items get crossed out when user clicks edit button but then clicks it again or hits Enter before entring any text
 
 # Code Design & Refactoring
-- Check if list exists prior to creating an item for it
-- Create List component
-- Cleanly reuse UI & logic for List & Item editing
-- Create Item component?
-- Stop using underscores in web app variable names while continuing to use them in SQL
-- Only get a single item after it's updated rather than all items for the list
+- MVP
+    - Create List component
+    - Create Item component?
+    - Check if list exists prior to creating an item for it
+- Post-MVP
+    - Reuse UI & logic for List & Item editing with toggling edit mode
+    - Only get a single item after it's updated rather than all items for the list
+    - Stop using underscores in web app variable names & continue using them in SQL
+
+# Future Improvements for Users
+Functionality
+- MVP
+    - Keep user from having to click in edit fields to start typing for items & lists
+- Post-MVP
+    - Allow for lists to be shared with other users
+    - Allow for lists to be publicly viewable & editable (only by crossing out--no renaming, deleting, or adding?)
+    - Create list templates that can be added to lists when the lists are created
+    - Allow for all minimized items to be un-crossed out
+    - Allow for all minimized lists to be un-crossed out?
+    - Let list templates be added to existing lists
+    - Let users create multiple collections of lists where each collection has its own page that is clicked on like the current dashboard tab
+UI
+- MVP
+    - Use popup windows other than built in browser ones or use another visual cue for confirming deletion
+    - Prepopulate item & list edit name fields with the existing name
+    - Add back lower half of nav bar?
+    - Put delete & edit buttons to the right of list names with the edit button closest to the list name?
+    - Center list names in their column?
+- Post-MVP
+    - Make hovering nav bar with list names so users can jump to any list with a single click/tap
+    - Put crossed out items in thier own section?
+    - Put crossed out lists in their own, minimized section?
+    - Deleting/editing (Edit mode allows editing & deleting of lists & items)
+        - List deletion requires confirmation
+        - Item deletion doesn't
+        - Can't cross out items in this mode?
+        - Don't have to confirm changes for each & every item changed (when changing multiple item names, for example). Instead, all changes are saved when edit mode is closed
+        - Don't delete immediately. Change text to red (& maybe sort to top of list in a "To be deleted" section)
+        - X to delete should appear next to all lists & items in edit mode
+        - For long names with no whitespace, start the text at the level as the delete & edit buttons
+        - For long names with or without whitespace, wrap them so they don't go beneath the delete & edit buttons on the 2nd & subsequent lines
+        - With small screen, make selected nav bar item visible
+        - More precisely define number of columns for varying screen sizes (especially on the smaller end)
+        - Make input fields just small enough to fit placeholder text then expand them as user types?
+
+
 
 # Setup
 - composer create-project laravel/laravel SplendifeList-LaravelAndVue
