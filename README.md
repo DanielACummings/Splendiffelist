@@ -6,6 +6,7 @@ Functionality
 - Make input fields just small enough to fit placeholder text then expand them as user types?
 
 UI
+- Make hovering nav bar with list names so users can jump to any list with a single click/tap
 - Use multiple columns of lists
     - Mobile: 1 column when vertical, 2 columns when horizontal
     - Desktop: 4 columns max

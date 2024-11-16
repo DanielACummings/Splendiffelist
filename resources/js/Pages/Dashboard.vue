@@ -129,7 +129,8 @@ function createItem(listId) {
     });
 }
 
-function updateItem(listId, item, newName = null, crossedOut = null) {
+function updateItem(listId, item, optionalParams = {}) {
+  const { newName, crossedOut } = optionalParams;
   item.editing = false;
   if (item.name === newName) {
     alert('Name entered matches the existing name')
@@ -252,7 +253,7 @@ const standardText = computed(() => {
           <ul>
             <li v-for="item in list.items" :key="item.id">
               <template v-if="item.editing">
-                <form @submit.prevent="updateItem(list.id, item, item.newName)">
+                <form @submit.prevent="updateItem(list.id, item, { newName: item.newName })">
                   <input type="text" v-model="item.newName" autofocus>
                   <button type="submit" class="editButton">
                     ✔
@@ -268,7 +269,8 @@ const standardText = computed(() => {
                 <button :class="editButton" @click="item.editing = true">
                   ✎
                 </button>
-                <span @click="updateItem(list.id, item, null, item.crossed_out)"
+                <span @click="updateItem(list.id, item,
+                  { crossedOut:item.crossed_out })"
                   :class="[{ 'line-through': item.crossed_out }, standardText]"
                 >
                   {{ item.name }}
