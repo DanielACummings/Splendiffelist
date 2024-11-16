@@ -177,7 +177,7 @@ const editButton = computed(() => {
   return `${customButton.value} bg-yellow-500 hover:bg-yellow-600 px-2`;
 });
 const deleteButton = computed(() => {
-  return `${customButton.value} bg-red-500 hover:bg-red-600 px-2`;
+  return `${customButton.value} bg-red-500 hover:bg-red-600 px-3`;
 });
 const standardText = computed(() => {
   return 'text-gray-800 dark:text-gray-200';
@@ -202,7 +202,7 @@ const inputFieldStyling = computed(() => {
     </template>
     <div>
       <form @submit.prevent="createList">
-        <button type="submit" :class="addButton" class="mt-4">
+        <button type="submit" :class="addButton" class="mt-5">
           ➕
         </button>
         <input type="text"
@@ -226,18 +226,18 @@ const inputFieldStyling = computed(() => {
             </form>
           </template>
           <template v-else>
+            <button :class="deleteButton" @click="deleteList(list)">
+              x
+            </button>
+            <button :class="editButton" @click="list.editing = true">
+              ✎
+            </button>
             <span @click="updateList(list, null, list.crossed_out)"
               :class="[{ 'line-through': list.crossed_out }, standardText]"
               class="mr-2"
             >
               {{ list.name }}
             </span>
-            <button :class="editButton" @click="list.editing = true">
-              ✎
-            </button>
-            <button :class="deleteButton" @click="deleteList(list)">
-              x
-            </button>
           </template>
           <form @submit.prevent="createItem(list.id)">
             <button type="submit" :class="addButton">

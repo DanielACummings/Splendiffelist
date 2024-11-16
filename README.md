@@ -3,11 +3,12 @@ Functionality
 - Keep user from having to click in edit fields to start typing for items & lists
 
 UI
-- Center list names in their column?
-- Add margin or padding to right of screen
 - Use multiple columns of lists
     - Mobile: 1 column when vertical, 2 columns when horizontal
     - Desktop: 4 columns max
+- Remove lower half of nav bar?
+- Center list names in their column?
+- Add margin or padding to left of screen
 - Put delete & edit buttons to the right of list names with the edit button closest to the list name?
 - Display list edit name field only after edit button is clicked
 - Prepopulate item & list edit name fields with the existing name
