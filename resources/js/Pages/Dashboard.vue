@@ -62,12 +62,6 @@ function createList() {
 
 function updateList(list, newName = null, crossedOut = null) {
   list.editing = false;
-  if (list.name === newName) {
-    alert('Name entered matches the existing name')
-
-    return;
-  }
-
   const updates = {};
   if (newName) {
     updates.name = newName;
@@ -132,12 +126,6 @@ function createItem(listId) {
 function updateItem(listId, item, optionalParams = {}) {
   const { newName, crossedOut } = optionalParams;
   item.editing = false;
-  if (item.name === newName) {
-    alert('Name entered matches the existing name')
-
-    return
-  }
-
   const updates = {};
   if (newName) {
     updates.name = newName;
@@ -218,13 +206,12 @@ const inputFieldStyling = computed(() => {
         <li v-for="list in lists" :key="list.id">
           <template v-if="list.editing">
             <form @submit.prevent="updateList(list, list.newName, null)">
-              <input type="text" v-model="list.newName" autofocus
-                placeholder="List name"
-                :class="[standardText, inputFieldStyling]"
-              >
               <button type="submit" :class="editButton">
                 ✔
               </button>
+              <input type="text" v-model="list.newName" :placeholder="list.name"
+                autofocus :class="[standardText, inputFieldStyling]"
+              >
             </form>
           </template>
           <template v-else>
@@ -254,11 +241,15 @@ const inputFieldStyling = computed(() => {
           <ul>
             <li v-for="item in list.items" :key="item.id">
               <template v-if="item.editing">
-                <form @submit.prevent="updateItem(list.id, item, { newName: item.newName })">
-                  <input :class="[standardText, inputFieldStyling]" type="text" v-model="item.newName" autofocus>
+                <form @submit.prevent="updateItem(list.id, item,
+                  { newName: item.newName })"
+                >
                   <button type="submit" :class="editButton">
                     ✔
                   </button>
+                  <input :class="[standardText, inputFieldStyling]" type="text"
+                    v-model="item.newName" :placeholder="item.name" autofocus
+                  >
                 </form>
               </template>
               <template v-else>
@@ -275,7 +266,7 @@ const inputFieldStyling = computed(() => {
                   :class="[{ 'line-through': item.crossed_out }, standardText]"
                   class="text-wrap break-words"
                 >
-                  {{ item.name }}
+                  • {{ item.name }}
                 </span>
               </template>
             </li>

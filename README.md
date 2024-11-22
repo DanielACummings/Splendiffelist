@@ -27,7 +27,19 @@ Functionality
     - Let users create multiple collections of lists where each collection has its own page that is clicked on like the current dashboard tab
 UI
 - MVP
+    - Remove Laravel logos
+    - Remove Laravel links from homescreen & add info about SplendifeList
+    - Remove Laravel from titles & everywhere else
+    - Smaller item buttons & maybe smaller list ones? Depends on edit mode below
+    - Implement minimal version of edit mode?
+        - Only applicable to a single list
+        - List name automatically displays its edit name input field prepopulated with original name?
+        - Maybe also turn item names into input fields so they don't need edit buttons
+        - Delete buttons appear for items
+            - Also make edit buttons appear if not all item names turn to input fields
+        - Lists always have their delete & edit buttons
     - Use popup windows other than built in browser ones or use another visual cue for confirming deletion
+    - Make list names larger
     - Prepopulate item & list edit name fields with the existing name
     - Add back lower half of nav bar?
     - Put delete & edit buttons to the right of list names with the edit button closest to the list name?
@@ -48,8 +60,9 @@ UI
         - With small screen, make selected nav bar item visible
         - More precisely define number of columns for varying screen sizes (especially on the smaller end)
         - Make input fields just small enough to fit placeholder text then expand them as user types?
-
-
+    - For long names that wrap without whitespace, use a dash between the wrapped lines
+    - Update home screen to have local browser storage version of the app so it can be demoed or even used indefinitely without signing up
+    - Migrate data from local storage to DB option (& an easy to see visual cue for knowing (when logged in) that there's local storage data that can be migrated)
 
 # Setup
 - composer create-project laravel/laravel SplendifeList-LaravelAndVue
