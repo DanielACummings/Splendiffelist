@@ -41,11 +41,11 @@ UI
     - Use popup windows other than built in browser ones or use another visual cue for confirming deletion
     - Make list names larger
     - Prepopulate item & list edit name fields with the existing name
-    - Add back lower half of nav bar?
     - Put delete & edit buttons to the right of list names with the edit button closest to the list name?
     - Center list names in their column?
 - Post-MVP
     - Make hovering nav bar with list names so users can jump to any list with a single click/tap
+    - Use masonry layout for lists
     - Put crossed out items in thier own section?
     - Put crossed out lists in their own, minimized section?
     - Deleting/editing (Edit mode allows editing & deleting of lists & items)

@@ -42,10 +42,12 @@ function loadList(listId) {
 function createList() {
   if (newListName.value.trim() === '') {
     alert('Please enter a list name');
+
     return;
   }
   if (lists.value.find(list => list.name === newListName.value)) {
     alert('List name already in use');
+
     return;
   }
 
@@ -53,7 +55,7 @@ function createList() {
     .then(response => {
       const newListId = response.data.id;
       loadList(newListId);
-      newListName.value = '';
+      newListName.value = ''; // Clear the input after submission
     })
     .catch(error => {
       console.error(error);
@@ -61,7 +63,6 @@ function createList() {
 }
 
 function updateList(list, newName = null, crossedOut = null) {
-  list.editing = false;
   const updates = {};
   if (newName) {
     updates.name = newName;
@@ -74,6 +75,7 @@ function updateList(list, newName = null, crossedOut = null) {
     .then(() => {
       if (newName) {
         list.name = newName;
+        list.newName = ''; // Clear the input after submission
       }
     })
     .catch(error => {
@@ -112,6 +114,11 @@ function createItem(listId) {
 
     return;
   }
+  else if (lists.value.find(list => list.items.find(item => item.name === newItemName))) {
+    alert('Item name already used in this list');
+
+    return;
+  }
 
   axios.post(`lists/${listId}`, { name: newItemName })
     .then(() => {
@@ -125,7 +132,6 @@ function createItem(listId) {
 
 function updateItem(listId, item, optionalParams = {}) {
   const { newName, crossedOut } = optionalParams;
-  item.editing = false;
   const updates = {};
   if (newName) {
     updates.name = newName;
@@ -200,14 +206,24 @@ const inputFieldStyling = computed(() => {
         />
       </form>
       <br/>
+
+      <!-- Lists -->
       <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4
         gap-4"
       >
         <li v-for="list in lists" :key="list.id">
-          <template v-if="list.editing">
+          <template v-if="list.editMode">
+            <form @submit.prevent="list.editMode = false">
+              <button type="submit" :class="editButton">
+                Close edit mode
+              </button>
+            </form>
             <form @submit.prevent="updateList(list, list.newName, null)">
               <button type="submit" :class="editButton">
                 ✔
+              </button>
+              <button :class="deleteButton" @click="deleteList(list)">
+                x
               </button>
               <input type="text" v-model="list.newName" :placeholder="list.name"
                 autofocus :class="[standardText, inputFieldStyling]"
@@ -215,10 +231,7 @@ const inputFieldStyling = computed(() => {
             </form>
           </template>
           <template v-else>
-            <button :class="deleteButton" @click="deleteList(list)">
-              x
-            </button>
-            <button :class="editButton" @click="list.editing = true">
+            <button :class="editButton" @click="list.editMode = true">
               ✎
             </button>
             <span @click="updateList(list, null, list.crossed_out)"
@@ -238,33 +251,32 @@ const inputFieldStyling = computed(() => {
               :class="[standardText, inputFieldStyling]"
             />
           </form>
+
+          <!-- Items -->
           <ul>
             <li v-for="item in list.items" :key="item.id">
-              <template v-if="item.editing">
+              <template v-if="list.editMode">
                 <form @submit.prevent="updateItem(list.id, item,
                   { newName: item.newName })"
                 >
-                  <button type="submit" :class="editButton">
-                    ✔
-                  </button>
-                  <input :class="[standardText, inputFieldStyling]" type="text"
-                    v-model="item.newName" :placeholder="item.name" autofocus
-                  >
-                </form>
-              </template>
-              <template v-else>
+                <button type="submit" :class="editButton">
+                  ✔
+                </button>
                 <button :class="deleteButton"
                   @click="deleteItem(item.id, list.id)"
                 >
                   x
                 </button>
-                <button :class="editButton" @click="item.editing = true">
-                  ✎
-                </button>
-                <span @click="updateItem(list.id, item,
-                  { crossedOut:item.crossed_out })"
+                <input :class="[standardText, inputFieldStyling]" type="text"
+                  v-model="item.newName" :placeholder="item.name" autofocus
+                >
+                </form>
+              </template>
+              <template v-else>
+                <span class="text-wrap break-words"
+                  @click="updateItem(list.id, item,
+                    { crossedOut: item.crossed_out })"
                   :class="[{ 'line-through': item.crossed_out }, standardText]"
-                  class="text-wrap break-words"
                 >
                   • {{ item.name }}
                 </span>
