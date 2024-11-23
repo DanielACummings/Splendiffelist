@@ -1,12 +1,10 @@
 # Bugs
-- Lists & items display to all users regardless of who created them
 - Get rid of console errors displayed whenever a list or item is deleted
 
 # Code Design & Refactoring
 - MVP
     - Create List component
     - Create Item component?
-    - Check if list exists prior to creating an item for it
     - Fix vulnerabilities found with NPM audit
 - Post-MVP
     - Reuse UI & logic for List & Item editing with toggling edit mode

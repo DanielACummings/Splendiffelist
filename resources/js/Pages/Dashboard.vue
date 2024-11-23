@@ -114,7 +114,8 @@ function createItem(listId) {
 
     return;
   }
-  else if (lists.value.find(list => list.items.find(item => item.name === newItemName))) {
+  else if (lists.value.find(list => list.id == listId
+    && list.items.find(item => item.name === newItemName))) {
     alert('Item name already used in this list');
 
     return;
@@ -165,7 +166,7 @@ const customButton = computed(() => {
   return 'text-gray-800 py-1 rounded-full mb-1 mt-1 mr-1';
 });
 const addButton = computed(() => {
-  return `${customButton.value} bg-green-500 hover:bg-green-600 text-sm px-1`;
+  return `${customButton.value} bg-green-500 hover:bg-green-600 text-md px-1`;
 });
 const editButton = computed(() => {
   return `${customButton.value} bg-yellow-500 hover:bg-yellow-600 px-2`;
