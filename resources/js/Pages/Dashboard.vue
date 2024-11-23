@@ -236,7 +236,7 @@ const inputFieldStyling = computed(() => {
             </button>
             <span @click="updateList(list, null, list.crossed_out)"
               :class="[{ 'line-through': list.crossed_out }, standardText]"
-              class="text-wrap break-words mr-2"
+              class="text-wrap text-xl break-words mr-2"
             >
               {{ list.name }}
             </span>

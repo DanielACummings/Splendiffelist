@@ -1,6 +1,3 @@
-# Miscellaneous
-- Update app name in Git, GitHub, & package-lock.json
-
 # Bugs
 - Lists & items display to all users regardless of who created them
 - Get rid of console errors displayed whenever a list or item is deleted
@@ -30,11 +27,6 @@ Functionality
     - Let users create multiple collections of lists where each collection has its own page that is clicked on like the current dashboard tab
 UI
 - MVP
-    - Remove Laravel logos
-    - Remove Laravel links from homescreen & add info about Splendiffelist
-    - Remove Laravel from everywhere else
-    - Replace SplendifeList with Splendiffelist
-    - Make list names larger
 - Post-MVP
     - Make popup for list deletion confirmation look nice
     - Smaller item buttons & maybe smaller list ones? Depends on edit mode below
