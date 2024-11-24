@@ -6,7 +6,7 @@ import { computed, onMounted, ref } from 'vue';
 
 const lists = ref([]);
 const newListName = ref('');
-const newItemNames = ref({});
+const itemNames = ref({});
 
 onMounted(() => {
   loadAllLists();
@@ -18,7 +18,7 @@ function loadAllLists() {
     .then(response => {
       lists.value = response.data;
       lists.value.forEach(list => {
-        newItemNames.value[list.id] = '';
+        itemNames.value[list.id] = '';
         getItemsByList(list.id);
       });
     })
@@ -87,6 +87,10 @@ function deleteList(list) {
   if (confirm(`Are you sure you want to delete the "${list.name}" list?`)) {
     axios.delete(`lists/${list.id}`)
       .then(() => {
+        // Delete items belonging to the deleted list so loadAllLists doesn't
+        // pass the ID of the deleted list to getItemsByList 
+        itemNames.value = {};
+
         loadAllLists();
       })
       .catch(error => {
@@ -108,7 +112,7 @@ function getItemsByList(listId) {
 }
 
 function createItem(listId) {
-  const newItemName = newItemNames.value[listId].trim();
+  const newItemName = itemNames.value[listId].trim();
   if (newItemName === '') {
     alert('Please enter a list item name');
 
@@ -124,7 +128,7 @@ function createItem(listId) {
   axios.post(`lists/${listId}`, { name: newItemName })
     .then(() => {
       getItemsByList(listId);
-      newItemNames.value[listId] = ''; // Clear the input after submission
+      itemNames.value[listId] = ''; // Clear the input after submission
     })
     .catch(error => {
       console.error(error);
@@ -247,7 +251,7 @@ const inputFieldStyling = computed(() => {
               ➕
             </button>
             <input type="text"
-              v-model="newItemNames[list.id]"
+              v-model="itemNames[list.id]"
               placeholder="Item name"
               :class="[standardText, inputFieldStyling]"
             />
