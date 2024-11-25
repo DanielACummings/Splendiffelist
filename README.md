@@ -7,6 +7,7 @@
     - Create Item component?
     - Fix vulnerabilities found with NPM audit
 - Post-MVP
+    - Use a const newItemName near const newListName to make the new list & new item logic match
     - Reuse UI & logic for List & Item editing with toggling edit mode
     - Only get a single item after it's updated rather than all items for the list
     - Stop using underscores in web app variable names & continue using them in SQL

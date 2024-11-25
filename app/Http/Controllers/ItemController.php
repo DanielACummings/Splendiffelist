@@ -65,10 +65,8 @@ class ItemController extends Controller
 
     private function getValidItem($itemId) {
         $item = Item::with('itemList')->find($itemId);
-        if ($item === null) {
-            return null;
-        }
-        else if ($item->itemList->user_id !== Auth::id()) {
+        if ($item === null || $item->itemList === null
+            || $item->itemList->user_id !== Auth::id()) {
             return null;
         }
 

@@ -6,7 +6,6 @@ import { computed, onMounted, ref } from 'vue';
 
 const lists = ref([]);
 const newListName = ref('');
-const itemNames = ref({});
 
 onMounted(() => {
   loadAllLists();
@@ -16,9 +15,14 @@ onMounted(() => {
 function loadAllLists() {
   axios.get('lists')
     .then(response => {
-      lists.value = response.data;
+      lists.value = response.data.map(list => ({
+        id: list.id,
+        name: list.name,
+        crossed_out: list.crossed_out,
+        items: [],
+        newItemName: ''
+      }));
       lists.value.forEach(list => {
-        itemNames.value[list.id] = '';
         getItemsByList(list.id);
       });
     })
@@ -31,7 +35,13 @@ function loadList(listId) {
   axios.get(`lists/${listId}`)
     .then(response => {
       const list = response.data;
-      lists.value.push(list);
+      lists.value.push({
+        id: list.id,
+        name: list.name,
+        crossed_out: list.crossed_out,
+        items: [],
+        newItemName: ''
+      });
       getItemsByList(listId);
     })
     .catch(error => {
@@ -87,11 +97,8 @@ function deleteList(list) {
   if (confirm(`Are you sure you want to delete the "${list.name}" list?`)) {
     axios.delete(`lists/${list.id}`)
       .then(() => {
-        // Delete items belonging to the deleted list so loadAllLists doesn't
-        // pass the ID of the deleted list to getItemsByList 
-        itemNames.value = {};
-
-        loadAllLists();
+        // Locally remove the deleted list
+        lists.value = lists.value.filter(l => l.id !== list.id);
       })
       .catch(error => {
         console.error(error);
@@ -112,13 +119,14 @@ function getItemsByList(listId) {
 }
 
 function createItem(listId) {
-  const newItemName = itemNames.value[listId].trim();
+  const newItemName = lists.value
+    .find(list => list.id === listId).newItemName.trim();
+
   if (newItemName === '') {
     alert('Please enter a list item name');
 
     return;
-  }
-  else if (lists.value.find(list => list.id == listId
+  } else if (lists.value.find(list => list.id === listId
     && list.items.find(item => item.name === newItemName))) {
     alert('Item name already used in this list');
 
@@ -128,7 +136,8 @@ function createItem(listId) {
   axios.post(`lists/${listId}`, { name: newItemName })
     .then(() => {
       getItemsByList(listId);
-      itemNames.value[listId] = ''; // Clear the input after submission
+      // Clear the input after submission
+      lists.value.find(list => list.id === listId).newItemName = '';
     })
     .catch(error => {
       console.error(error);
@@ -152,7 +161,6 @@ function updateItem(listId, item, optionalParams = {}) {
     .catch(error => {
       console.error(error);
     });
-  
 }
 
 function deleteItem(itemId, listId) {
@@ -251,7 +259,7 @@ const inputFieldStyling = computed(() => {
               ➕
             </button>
             <input type="text"
-              v-model="itemNames[list.id]"
+              v-model="list.newItemName"
               placeholder="Item name"
               :class="[standardText, inputFieldStyling]"
             />
