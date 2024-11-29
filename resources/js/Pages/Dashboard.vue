@@ -226,17 +226,19 @@ const inputFieldStyling = computed(() => {
       >
         <li v-for="list in lists" :key="list.id">
           <template v-if="list.editMode">
-            <form @submit.prevent="list.editMode = false">
-              <button type="submit" :class="editButton">
-                Close edit mode
+            <div class="flex items-center space-x-1">
+              <form @submit.prevent="list.editMode = false">
+                <button type="submit" :class="editButton">
+                  Close edit mode
+                </button>
+              </form>
+              <button :class="deleteButton" @click="deleteList(list)">
+                Delete list
               </button>
-            </form>
+            </div>
             <form @submit.prevent="updateList(list, list.newName, null)">
               <button type="submit" :class="editButton">
                 ✔
-              </button>
-              <button :class="deleteButton" @click="deleteList(list)">
-                x
               </button>
               <input type="text" v-model="list.newName" :placeholder="list.name"
                 autofocus :class="[standardText, inputFieldStyling]"
@@ -269,21 +271,24 @@ const inputFieldStyling = computed(() => {
           <ul>
             <li v-for="item in list.items" :key="item.id">
               <template v-if="list.editMode">
-                <form @submit.prevent="updateItem(list.id, item,
-                  { newName: item.newName })"
-                >
-                <button type="submit" :class="editButton">
-                  ✔
-                </button>
-                <button :class="deleteButton"
-                  @click="deleteItem(item.id, list.id)"
-                >
-                  x
-                </button>
-                <input :class="[standardText, inputFieldStyling]" type="text"
-                  v-model="item.newName" :placeholder="item.name" autofocus
-                >
-                </form>
+                <div class="flex items-center space-x-1">
+                  <button :class="deleteButton"
+                    @click="deleteItem(item.id, list.id)"
+                  >
+                    x
+                  </button>
+                  <form @submit.prevent="updateItem(list.id, item,
+                    { newName: item.newName })"
+                  >
+                    <button type="submit" :class="editButton">
+                      ✔
+                    </button>
+                    <input :class="[standardText, inputFieldStyling]"
+                      type="text" v-model="item.newName" style="width: 204px;"
+                      :placeholder="item.name" autofocus
+                    >
+                  </form>
+                </div>
               </template>
               <template v-else>
                 <span class="text-wrap break-words"
