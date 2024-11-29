@@ -1,4 +1,5 @@
 <script setup>
+import axios from 'axios';
 import { defineProps } from 'vue';
 
 const props = defineProps({
@@ -11,7 +12,7 @@ lists: Array
 function getItemsByList(listId) {
   axios.get(`lists/${listId}/items`)
     .then(response => {
-      const list = lists.value.find(list => list.id === listId);
+      const list = props.lists.value.find(list => list.id === listId);
       list.items = response.data;
     })
     .catch(error => {
@@ -52,9 +53,6 @@ function deleteItem(itemId, listId) {
 const customButton = computed(() => {
   return 'text-gray-800 py-1 rounded-full mb-1 mt-1 mr-1';
 });
-const addButton = computed(() => {
-  return `${customButton.value} bg-green-500 hover:bg-green-600 text-md px-1`;
-});
 const editButton = computed(() => {
   return `${customButton.value} bg-yellow-500 hover:bg-yellow-600 px-2`;
 });
@@ -70,16 +68,22 @@ const inputFieldStyling = computed(() => {
 </script>
 
 <template>
-  <template v-if="list.editMode">
-    <button :class="deleteButton" @click="deleteItem(item.id, list.id)">x</button>
-    <form @submit.prevent="updateItem(list.id, item, { newName: item.newName })">
+  <template v-if="props.list.editMode">
+    <button :class="deleteButton" @click="deleteItem(props.item.id,
+      props.list.id)"
+    >
+      x
+    </button>
+    <form @submit.prevent="updateItem(props.list.id, props.item,
+      { newName: props.item.newName })"
+    >
       <button type="submit" :class="editButton">✔</button>
       <input
         :class="[standardText, inputFieldStyling]"
         type="text"
-        v-model="item.newName"
+        v-model="props.item.newName"
         style="width: 204px;"
-        :placeholder="item.name"
+        :placeholder="props.item.name"
         autofocus
       />
     </form>
@@ -87,10 +91,11 @@ const inputFieldStyling = computed(() => {
   <template v-else>
     <span
       class="text-wrap break-words"
-      @click="updateItem(list.id, item, { crossedOut: item.crossed_out })"
-      :class="[{ 'line-through': item.crossed_out }, standardText]"
+      @click="updateItem(props.list.id, props.item,
+        { crossedOut: props.item.crossed_out })"
+      :class="[{ 'line-through': props.item.crossed_out }, standardText]"
     >
-      • {{ item.name }}
+      • {{ props.item.name }}
     </span>
   </template>
 </template>

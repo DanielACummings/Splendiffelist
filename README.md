@@ -3,6 +3,7 @@
     - Create Item component
     - Create List component
 - Post-MVP
+    - Move custom CSS classes from Dashboard.vue & Item.vue to their own helper file
     - Fix vulnerabilities found with NPM audit
     - Use a const newItemName near const newListName to make the new list & new item logic match
     - Reuse UI & logic for List & Item editing with toggling edit mode
