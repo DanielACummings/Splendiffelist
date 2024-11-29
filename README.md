@@ -1,12 +1,9 @@
-# Bugs
-- Get rid of console errors displayed whenever a list or item is deleted
-
 # Code Design & Refactoring
 - MVP
+    - Create Item component
     - Create List component
-    - Create Item component?
-    - Fix vulnerabilities found with NPM audit
 - Post-MVP
+    - Fix vulnerabilities found with NPM audit
     - Use a const newItemName near const newListName to make the new list & new item logic match
     - Reuse UI & logic for List & Item editing with toggling edit mode
     - Only get a single item after it's updated rather than all items for the list

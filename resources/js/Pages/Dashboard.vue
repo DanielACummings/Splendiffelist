@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { computed, onMounted, ref } from 'vue';
+import { Item } from '@/Components/Item.vue';
 
 const lists = ref([]);
 const newListName = ref('');
@@ -10,6 +11,33 @@ const newListName = ref('');
 onMounted(() => {
   loadAllLists();
 });
+
+// Items
+function createItem(listId) {
+  const newItemName = lists.value
+    .find(list => list.id === listId).newItemName.trim();
+
+  if (newItemName === '') {
+    alert('Please enter a list item name');
+
+    return;
+  } else if (lists.value.find(list => list.id === listId
+    && list.items.find(item => item.name === newItemName))) {
+    alert('Item name already used in this list');
+
+    return;
+  }
+
+  axios.post(`lists/${listId}`, { name: newItemName })
+    .then(() => {
+      getItemsByList(listId);
+      // Clear the input after submission
+      lists.value.find(list => list.id === listId).newItemName = '';
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}
 
 // Lists
 function loadAllLists() {
@@ -104,73 +132,6 @@ function deleteList(list) {
         console.error(error);
       });
   }
-}
-
-// Items
-function getItemsByList(listId) {
-  axios.get(`lists/${listId}/items`)
-    .then(response => {
-      const list = lists.value.find(list => list.id === listId);
-      list.items = response.data;
-    })
-    .catch(error => {
-      console.error(error);
-    });
-}
-
-function createItem(listId) {
-  const newItemName = lists.value
-    .find(list => list.id === listId).newItemName.trim();
-
-  if (newItemName === '') {
-    alert('Please enter a list item name');
-
-    return;
-  } else if (lists.value.find(list => list.id === listId
-    && list.items.find(item => item.name === newItemName))) {
-    alert('Item name already used in this list');
-
-    return;
-  }
-
-  axios.post(`lists/${listId}`, { name: newItemName })
-    .then(() => {
-      getItemsByList(listId);
-      // Clear the input after submission
-      lists.value.find(list => list.id === listId).newItemName = '';
-    })
-    .catch(error => {
-      console.error(error);
-    });
-}
-
-function updateItem(listId, item, optionalParams = {}) {
-  const { newName, crossedOut } = optionalParams;
-  const updates = {};
-  if (newName) {
-    updates.name = newName;
-  }
-  if (crossedOut !== null) {
-    updates.crossed_out = item.crossed_out = !crossedOut;
-  }
-
-  axios.put(`items/${item.id}`, updates)
-    .then(() => {
-      getItemsByList(listId);
-    })
-    .catch(error => {
-      console.error(error);
-    });
-}
-
-function deleteItem(itemId, listId) {
-  axios.delete(`items/${itemId}`)
-    .then(() => {
-      getItemsByList(listId);
-    })
-    .catch(error => {
-      console.error(error);
-    });
 }
 
 // Custom CSS classes
@@ -270,35 +231,7 @@ const inputFieldStyling = computed(() => {
           <!-- Items -->
           <ul>
             <li v-for="item in list.items" :key="item.id">
-              <template v-if="list.editMode">
-                <div class="flex items-center space-x-1">
-                  <button :class="deleteButton"
-                    @click="deleteItem(item.id, list.id)"
-                  >
-                    x
-                  </button>
-                  <form @submit.prevent="updateItem(list.id, item,
-                    { newName: item.newName })"
-                  >
-                    <button type="submit" :class="editButton">
-                      ✔
-                    </button>
-                    <input :class="[standardText, inputFieldStyling]"
-                      type="text" v-model="item.newName" style="width: 204px;"
-                      :placeholder="item.name" autofocus
-                    >
-                  </form>
-                </div>
-              </template>
-              <template v-else>
-                <span class="text-wrap break-words"
-                  @click="updateItem(list.id, item,
-                    { crossedOut: item.crossed_out })"
-                  :class="[{ 'line-through': item.crossed_out }, standardText]"
-                >
-                  • {{ item.name }}
-                </span>
-              </template>
+              <Item :list="list" :item="item" :lists="lists" />
             </li>
           </ul>
           <br/>
