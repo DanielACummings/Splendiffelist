@@ -1,9 +1,9 @@
 <script setup>
 import axios from 'axios';
+import Item from '@/Components/Item.vue';
 import { Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { computed, onMounted, ref } from 'vue';
-import { Item } from '@/Components/Item.vue';
 
 const lists = ref([]);
 const newListName = ref('');
@@ -14,17 +14,13 @@ onMounted(() => {
 
 // Items
 function createItem(listId) {
-  const newItemName = lists.value
-    .find(list => list.id === listId).newItemName.trim();
+  const newItemName = lists.value.find(list => list.id === listId).newItemName.trim();
 
   if (newItemName === '') {
     alert('Please enter a list item name');
-
     return;
-  } else if (lists.value.find(list => list.id === listId
-    && list.items.find(item => item.name === newItemName))) {
+  } else if (lists.value.find(list => list.id === listId && list.items.find(item => item.name === newItemName))) {
     alert('Item name already used in this list');
-
     return;
   }
 
@@ -33,6 +29,17 @@ function createItem(listId) {
       getItemsByList(listId);
       // Clear the input after submission
       lists.value.find(list => list.id === listId).newItemName = '';
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}
+
+function getItemsByList(listId) {
+  axios.get(`lists/${listId}/items`)
+    .then(response => {
+      const list = lists.value.find(list => list.id === listId);
+      list.items = response.data;
     })
     .catch(error => {
       console.error(error);
@@ -159,10 +166,7 @@ const inputFieldStyling = computed(() => {
   <Head title="Dashboard" />
   <AuthenticatedLayout>
     <template #header>
-      <h2 class="text-xl
-        font-semibold
-        leading-tight
-        text-gray-800
+      <h2 class="text-xl font-semibold leading-tight text-gray-800
         dark:text-gray-200"
       >
         Dashboard
@@ -198,9 +202,7 @@ const inputFieldStyling = computed(() => {
               </button>
             </div>
             <form @submit.prevent="updateList(list, list.newName, null)">
-              <button type="submit" :class="editButton">
-                ✔
-              </button>
+              <button type="submit" :class="editButton">✔</button>
               <input type="text" v-model="list.newName" :placeholder="list.name"
                 autofocus :class="[standardText, inputFieldStyling]"
               >
@@ -218,9 +220,7 @@ const inputFieldStyling = computed(() => {
             </span>
           </template>
           <form @submit.prevent="createItem(list.id)">
-            <button type="submit" :class="addButton">
-              ➕
-            </button>
+            <button type="submit" :class="addButton">➕</button>
             <input type="text"
               v-model="list.newItemName"
               placeholder="Item name"

@@ -1,18 +1,12 @@
 <script setup>
 import axios from 'axios';
-import { defineProps } from 'vue';
-
-const props = defineProps({
-list: Object,
-item: Object,
-lists: Array
-});
+import { computed } from 'vue';
 
 // Items
 function getItemsByList(listId) {
   axios.get(`lists/${listId}/items`)
     .then(response => {
-      const list = props.lists.value.find(list => list.id === listId);
+      const list = lists.value.find(list => list.id === listId);
       list.items = response.data;
     })
     .catch(error => {
@@ -68,34 +62,27 @@ const inputFieldStyling = computed(() => {
 </script>
 
 <template>
-  <template v-if="props.list.editMode">
-    <button :class="deleteButton" @click="deleteItem(props.item.id,
-      props.list.id)"
-    >
+  <template v-if="list.editMode">
+    <button :class="deleteButton" @click="deleteItem(item.id, list.id)">
       x
     </button>
-    <form @submit.prevent="updateItem(props.list.id, props.item,
-      { newName: props.item.newName })"
-    >
+    <form @submit.prevent="updateItem(list.id, item, { newName: item.newName })">
       <button type="submit" :class="editButton">✔</button>
-      <input
-        :class="[standardText, inputFieldStyling]"
+      <input :class="[standardText, inputFieldStyling]"
         type="text"
-        v-model="props.item.newName"
+        v-model="item.newName"
         style="width: 204px;"
-        :placeholder="props.item.name"
+        :placeholder="item.name"
         autofocus
       />
     </form>
   </template>
   <template v-else>
-    <span
-      class="text-wrap break-words"
-      @click="updateItem(props.list.id, props.item,
-        { crossedOut: props.item.crossed_out })"
-      :class="[{ 'line-through': props.item.crossed_out }, standardText]"
+    <span class="text-wrap break-words"
+      @click="updateItem(list.id, item, { crossedOut: item.crossed_out })"
+      :class="[{ 'line-through': item.crossed_out }, standardText]"
     >
-      • {{ props.item.name }}
+      • {{ item.name }}
     </span>
   </template>
 </template>
