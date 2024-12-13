@@ -1,28 +1,15 @@
 <script setup>
-import { computed, defineProps } from 'vue';
+import computedStyles from '../Helpers/ComputedStyles.js';
+import { defineProps } from 'vue';
+
+const { deleteButton, editButton, inputFieldStyling, standardText }
+  = computedStyles();
 
 const props = defineProps({
   item: Object,
   list: Object,
   updateItem: Function,
   deleteItem: Function,
-});
-
-// Custom CSS classes
-const customButton = computed(() => {
-  return 'text-gray-800 py-1 rounded-full mb-1 mt-1 mr-1';
-});
-const editButton = computed(() => {
-  return `${customButton.value} bg-yellow-500 hover:bg-yellow-600 px-2`;
-});
-const deleteButton = computed(() => {
-  return `${customButton.value} bg-red-500 hover:bg-red-600 px-3`;
-});
-const standardText = computed(() => {
-  return 'text-gray-800 dark:text-gray-200';
-});
-const inputFieldStyling = computed(() => {
-  return 'bg-gray-800 dark:bg-gray-800 mb-1';
 });
 </script>
 
