@@ -46,6 +46,35 @@ function getItemsByList(listId) {
     });
 }
 
+function updateItem(listId, item, optionalParams = {}) {
+  const { newName, crossedOut } = optionalParams;
+  const updates = {};
+  if (newName) {
+    updates.name = newName;
+  }
+  if (crossedOut !== null) {
+    updates.crossed_out = !crossedOut;
+  }
+
+  axios.put(`items/${item.id}`, updates)
+    .then(() => {
+      getItemsByList(listId);
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}
+
+function deleteItem(itemId, listId) {
+  axios.delete(`items/${itemId}`)
+    .then(() => {
+      getItemsByList(listId);
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}
+
 // Lists
 function loadAllLists() {
   axios.get('lists')
@@ -231,7 +260,9 @@ const inputFieldStyling = computed(() => {
           <!-- Items -->
           <ul>
             <li v-for="item in list.items" :key="item.id">
-              <Item :list="list" :item="item" />
+              <Item :list="list" :item="item" :updateItem="updateItem" 
+                :deleteItem="deleteItem"
+              />
             </li>
           </ul>
           <br/>

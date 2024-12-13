@@ -1,51 +1,12 @@
 <script setup>
-import axios from 'axios';
 import { computed, defineProps } from 'vue';
 
 const props = defineProps({
   item: Object,
   list: Object,
+  updateItem: Function,
+  deleteItem: Function,
 });
-
-// Items
-function getItemsByList(listId) {
-  axios.get(`lists/${listId}/items`)
-    .then(response => {
-      list.items = response.data;
-    })
-    .catch(error => {
-      console.error(error);
-    });
-}
-
-function updateItem(listId, item, optionalParams = {}) {
-  const { newName, crossedOut } = optionalParams;
-  const updates = {};
-  if (newName) {
-    updates.name = newName;
-  }
-  if (crossedOut !== null) {
-    updates.crossed_out = item.crossed_out = !crossedOut;
-  }
-
-  axios.put(`items/${item.id}`, updates)
-    .then(() => {
-      getItemsByList(listId);
-    })
-    .catch(error => {
-      console.error(error);
-    });
-}
-
-function deleteItem(itemId, listId) {
-  axios.delete(`items/${itemId}`)
-    .then(() => {
-      getItemsByList(listId);
-    })
-    .catch(error => {
-      console.error(error);
-    });
-}
 
 // Custom CSS classes
 const customButton = computed(() => {
@@ -75,7 +36,6 @@ const inputFieldStyling = computed(() => {
       <input :class="[standardText, inputFieldStyling]"
         type="text"
         v-model="item.newName"
-        style="width: 204px;"
         :placeholder="item.name"
         autofocus
       />
