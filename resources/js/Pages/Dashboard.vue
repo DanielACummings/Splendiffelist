@@ -60,7 +60,7 @@ function updateItem(listId, item, optionalParams = {}) {
   if (newName) {
     updates.name = newName;
   }
-  if (crossedOut !== null) {
+  if (crossedOut !== undefined) {
     updates.crossed_out = !crossedOut;
   }
 
