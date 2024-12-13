@@ -231,7 +231,7 @@ const inputFieldStyling = computed(() => {
           <!-- Items -->
           <ul>
             <li v-for="item in list.items" :key="item.id">
-              <Item :list="list" :item="item" :lists="lists" />
+              <Item :list="list" :item="item" />
             </li>
           </ul>
           <br/>

@@ -1,12 +1,16 @@
 <script setup>
 import axios from 'axios';
-import { computed } from 'vue';
+import { computed, defineProps } from 'vue';
+
+const props = defineProps({
+  item: Object,
+  list: Object,
+});
 
 // Items
 function getItemsByList(listId) {
   axios.get(`lists/${listId}/items`)
     .then(response => {
-      const list = lists.value.find(list => list.id === listId);
       list.items = response.data;
     })
     .catch(error => {
