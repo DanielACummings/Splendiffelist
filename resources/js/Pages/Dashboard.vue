@@ -18,13 +18,17 @@ onMounted(() => {
 
 // Items
 function createItem(listId) {
-  const newItemName = lists.value.find(list => list.id === listId).newItemName.trim();
+  const newItemName = lists.value.find(list => list.id === listId)
+    .newItemName.trim();
 
   if (newItemName === '') {
     alert('Please enter a list item name');
+
     return;
-  } else if (lists.value.find(list => list.id === listId && list.items.find(item => item.name === newItemName))) {
+  } else if (lists.value.find(list => list.id === listId && list.items
+    .find(item => item.name === newItemName))) {
     alert('Item name already used in this list');
+
     return;
   }
 
@@ -216,8 +220,11 @@ function deleteList(list) {
             </div>
             <form @submit.prevent="updateList(list, list.newName, null)">
               <button type="submit" :class="editButton">✔</button>
-              <input type="text" v-model="list.newName" :placeholder="list.name"
-                autofocus :class="[standardText, inputFieldStyling]"
+              <input type="text"
+                v-model="list.newName"
+                :placeholder="list.name"
+                autofocus
+                :class="[standardText, inputFieldStyling]"
               >
             </form>
           </template>
