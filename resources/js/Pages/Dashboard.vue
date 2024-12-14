@@ -26,7 +26,7 @@ function createItem(listId) {
 
     return;
   } else if (lists.value.find(list => list.id === listId && list.items
-    .find(item => item.name === newItemName))) {
+    .find(item => item.name.toLowerCase() === newItemName.toLowerCase()))) {
     alert('Item name already used in this list');
 
     return;
@@ -58,6 +58,15 @@ function updateItem(listId, item, optionalParams = {}) {
   const { newName, crossedOut } = optionalParams;
   const updates = {};
   if (newName) {
+    const list = lists.value.filter(l => l.id === listId);
+    const matchesExistingName = list.value.items
+      .find(i => i.name.toLowerCase() === newName.toLowerCase());
+    if (matchesExistingName) {
+      alert('Item name already in use');
+
+      return;
+    }
+
     updates.name = newName;
   }
   if (crossedOut !== undefined) {
@@ -127,7 +136,8 @@ function createList() {
 
     return;
   }
-  if (lists.value.find(list => list.name === newListName.value)) {
+  if (lists.value.find(list =>
+    list.name.toLowerCase() === newListName.value.toLowerCase())) {
     alert('List name already in use');
 
     return;
@@ -147,6 +157,14 @@ function createList() {
 function updateList(list, newName = null, crossedOut = null) {
   const updates = {};
   if (newName) {
+    const matchesExistingName = lists.value
+      .find(l => l.name.toLowerCase() === newName.toLowerCase());
+    if (matchesExistingName) {
+      alert('List name already in use');
+
+      return;
+    }
+
     updates.name = newName;
   }
   if (crossedOut !== null) {
