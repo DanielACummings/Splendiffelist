@@ -1,6 +1,5 @@
 <script setup>
 import computedStyles from '../Helpers/ComputedStyles.js';
-import { defineProps } from 'vue';
 
 const { deleteButton, editButton, inputFieldStyling, standardText }
   = computedStyles();

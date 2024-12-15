@@ -43,6 +43,7 @@ function createItem(listId) {
     });
 }
 
+
 function getItemsByList(listId) {
   axios.get(`lists/${listId}/items`)
     .then(response => {
@@ -54,12 +55,13 @@ function getItemsByList(listId) {
     });
 }
 
+
 function updateItem(listId, item, optionalParams = {}) {
   const { newName, crossedOut } = optionalParams;
   const updates = {};
   if (newName) {
-    const list = lists.value.filter(l => l.id === listId);
-    const matchesExistingName = list.value.items
+    const list = lists.value.find(l => l.id === listId);
+    const matchesExistingName = list.items
       .find(i => i.name.toLowerCase() === newName.toLowerCase());
     if (matchesExistingName) {
       alert('Item name already in use');
