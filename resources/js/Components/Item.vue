@@ -1,8 +1,8 @@
 <script setup>
-import computedStyles from '../Helpers/ComputedStyles.js';
+import { useComputedStyles } from '../Composables/ComputedStyles.js';
 
 const { deleteButton, editButton, inputFieldStyling, standardText }
-  = computedStyles();
+  = useComputedStyles();
 
 const props = defineProps({
   item: Object,

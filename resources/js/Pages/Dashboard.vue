@@ -1,13 +1,13 @@
 <script setup>
 import axios from 'axios';
 import Item from '@/Components/Item.vue';
-import computedStyles from '../Helpers/ComputedStyles.js';
+import { useComputedStyles } from '../Composables/ComputedStyles.js';
 import { Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { onMounted, ref } from 'vue';
 
 const { addButton, deleteButton, editButton, inputFieldStyling, standardText }
-  = computedStyles();
+  = useComputedStyles();
 
 const lists = ref([]);
 const newListName = ref('');

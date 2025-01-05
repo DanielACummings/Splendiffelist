@@ -1,6 +1,6 @@
 import { computed } from 'vue';
 
-const computedStyles = () => {
+export const useComputedStyles = () => {
     // Buttons
     const customButton = computed(() =>
         'text-gray-800 py-1 rounded-full mb-1 mt-1 mr-1');
@@ -18,12 +18,12 @@ const computedStyles = () => {
 
     return {
         customButton,
+        addButton,
         editButton,
         deleteButton,
-        addButton,
         standardText,
         inputFieldStyling,
     };
 };
 
-export default computedStyles;
+export default useComputedStyles;
