@@ -1,13 +1,21 @@
 <script setup>
 import axios from 'axios';
 import Item from '@/Components/Item.vue';
-import { useComputedStyles } from '../Composables/ComputedStyles.js';
 import { Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
-const { addButton, deleteButton, editButton, inputFieldStyling, standardText }
-  = useComputedStyles();
+// Computed CSS class groupings
+const customButton = computed(() =>
+  'text-gray-800 py-1 rounded-full mb-1 mt-1 mr-1');
+const addButton = computed(() =>
+  `${customButton.value} bg-green-500 hover:bg-green-600 text-md px-1`);
+const editButton = computed(() =>
+  `${customButton.value} bg-yellow-500 hover:bg-yellow-600 px-2`);
+const deleteButton = computed(() =>
+  `${customButton.value} bg-red-500 hover:bg-red-600 px-3`);
+const standardText = computed(() => 'text-gray-800 dark:text-gray-200');
+const inputFieldStyling = computed(() => 'bg-gray-800 dark:bg-gray-800 mb-1');
 
 const lists = ref([]);
 const newListName = ref('');
