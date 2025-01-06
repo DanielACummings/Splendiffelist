@@ -58,7 +58,7 @@ UI
 - More precisely define number of columns for varying screen sizes (especially on the smaller end)
 - For long names that wrap without whitespace, use a dash between the wrapped lines
 
-## Project Setup
+## Project Setup Notes
 - composer create-project laravel/laravel Splendiffelist
 - cd Splendiffelist
 - composer require laravel/breeze --dev
