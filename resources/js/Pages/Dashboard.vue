@@ -103,23 +103,31 @@ function deleteItem(itemId, listId) {
 }
 
 // Lists
-function loadAllLists() {
-  axios.get('lists')
-    .then(response => {
-      lists.value = response.data.map(list => ({
-        id: list.id,
-        name: list.name,
-        crossed_out: list.crossed_out,
-        items: [],
-        newItemName: ''
-      }));
-      lists.value.forEach(list => {
-        getItemsByList(list.id);
-      });
-    })
-    .catch(error => {
-      console.error(error);
-    });
+async function loadAllLists() {
+  try {
+    // Fetch all lists
+    const response = await axios.get('lists');
+    
+    // Directly assign the response data to lists.value
+    lists.value = response.data.map(list => ({
+      ...list,
+      items: [],
+      newItemName: ''
+    }));
+
+    // Fetch items for each list individually
+    await Promise.all(lists.value.map(async (list) => {
+      try {
+        const itemResponse = await axios.get(`lists/${list.id}/items`);
+        list.items = itemResponse.data;
+      } catch (error) {
+        console.error(`Error fetching items for list "${list.name}":`,
+          error);
+      }
+    }));
+  } catch (error) {
+    console.error('Error fetching lists:', error);
+  }
 }
 
 function loadList(listId) {
