@@ -118,11 +118,9 @@ async function loadAllLists() {
     // Fetch items for each list individually
     await Promise.all(lists.value.map(async (list) => {
       try {
-        const itemResponse = await axios.get(`lists/${list.id}/items`);
-        list.items = itemResponse.data;
+        getItemsByList(list.id);
       } catch (error) {
-        console.error(`Error fetching items for list "${list.name}":`,
-          error);
+        console.error(`Error fetching items for list "${list.name}":`, error);
       }
     }));
   } catch (error) {
@@ -130,7 +128,7 @@ async function loadAllLists() {
   }
 }
 
-function loadList(listId) {
+function loadNewList(listId) {
   axios.get(`lists/${listId}`)
     .then(response => {
       const list = response.data;
@@ -141,7 +139,6 @@ function loadList(listId) {
         items: [],
         newItemName: ''
       });
-      getItemsByList(listId);
     })
     .catch(error => {
       console.error(error);
@@ -164,7 +161,7 @@ function createList() {
   axios.post('/lists', { name: newListName.value })
     .then(response => {
       const newListId = response.data.id;
-      loadList(newListId);
+      loadNewList(newListId);
       newListName.value = ''; // Clear the input after submission
     })
     .catch(error => {
