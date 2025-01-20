@@ -162,7 +162,6 @@ function createList() {
     .then(response => {
       const newListId = response.data.id;
       loadNewList(newListId);
-      newListName.value = ''; // Clear the input after submission
     })
     .catch(error => {
       console.error(error);
@@ -173,7 +172,7 @@ function updateList(list, newName = null, crossedOut = null) {
   const updates = {};
   if (newName) {
     const matchesExistingName = lists.value
-      .find(l => l.name.toLowerCase() === newName.toLowerCase());
+      .some(l => l.name.toLowerCase() === newName.toLowerCase());
     if (matchesExistingName) {
       alert('List name already in use');
 
