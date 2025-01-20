@@ -25,26 +25,25 @@ onMounted(() => {
 });
 
 // Items
-function createItem(listId) {
-  const newItemName = lists.value.find(list => list.id === listId)
-    .newItemName.trim();
+function createItem(list) {
+  const newItemName = list.newItemName.trim();
 
   if (newItemName === '') {
     alert('Please enter a list item name');
 
     return;
-  } else if (lists.value.find(list => list.id === listId && list.items
-    .find(item => item.name.toLowerCase() === newItemName.toLowerCase()))) {
+  } else if (list.items.find(item => item.name.toLowerCase() === newItemName.toLowerCase())) {
     alert('Item name already used in this list');
 
     return;
   }
 
+  const listId = list.id;
   axios.post(`lists/${listId}`, { name: newItemName })
     .then(() => {
       getItemsByList(listId);
       // Clear the input after submission
-      lists.value.find(list => list.id === listId).newItemName = '';
+      list.newItemName = '';
     })
     .catch(error => {
       console.error(error);
@@ -271,7 +270,7 @@ function deleteList(list) {
               {{ list.name }}
             </span>
           </template>
-          <form @submit.prevent="createItem(list.id)">
+          <form @submit.prevent="createItem(list)">
             <button type="submit" :class="addButton">➕</button>
             <input type="text"
               v-model="list.newItemName"
