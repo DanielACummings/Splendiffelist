@@ -161,6 +161,7 @@ function createList() {
     .then(response => {
       const newListId = response.data.id;
       loadNewList(newListId);
+      newListName.value = ''; // Clear the input after submission
     })
     .catch(error => {
       console.error(error);
