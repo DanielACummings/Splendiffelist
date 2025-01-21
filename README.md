@@ -22,14 +22,14 @@
     - In a separate terminal tab or window: `npm run dev`
 - Open http://localhost:8000 in any browser
 
-## Refactoring Plans
-- Fix vulnerabilities found with NPM audit
+## Refactoring Plans & To Dos
 - Create List component
 - Move custom CSS classes from Dashboard.vue & Item.vue to their own composable file
 - Use a const newItemName near const newListName to make the new list & new item logic match
 - Reuse UI & logic for List & Item editing with toggling edit mode
 - Only get a single item after it's updated rather than all items for the list
 - Stop using underscores in web app variable names & continue using them in SQL
+- Fix vulnerabilities found with NPM audit
 
 ## Future Improvements for Users
 Functionality
