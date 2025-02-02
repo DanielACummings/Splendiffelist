@@ -64,11 +64,11 @@ class ItemController extends Controller
     }
 
     private function getValidItem($itemId) {
-        $item = Item::with('itemList')->find($itemId);
-        if ($item === null || $item->itemList === null
-            || $item->itemList->user_id !== Auth::id()) {
-            return null;
-        }
+        $item = Item::where('id', $itemId)
+        ->whereHas('itemList', function ($query) {
+            $query->where('user_id', Auth::id());
+        })
+        ->first();
 
         return $item;
     }
