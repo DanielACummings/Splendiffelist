@@ -25,26 +25,25 @@ onMounted(() => {
 });
 
 // Items
-function createItem(listId) {
-  const newItemName = lists.value.find(list => list.id === listId)
-    .newItemName.trim();
+function createItem(list) {
+  const newItemName = list.newItemName.trim();
 
   if (newItemName === '') {
     alert('Please enter a list item name');
 
     return;
-  } else if (lists.value.find(list => list.id === listId && list.items
-    .find(item => item.name.toLowerCase() === newItemName.toLowerCase()))) {
+  } else if (list.items.find(item => item.name.toLowerCase() === newItemName.toLowerCase())) {
     alert('Item name already used in this list');
 
     return;
   }
 
+  const listId = list.id;
   axios.post(`lists/${listId}`, { name: newItemName })
     .then(() => {
       getItemsByList(listId);
       // Clear the input after submission
-      lists.value.find(list => list.id === listId).newItemName = '';
+      list.newItemName = '';
     })
     .catch(error => {
       console.error(error);
@@ -103,26 +102,32 @@ function deleteItem(itemId, listId) {
 }
 
 // Lists
-function loadAllLists() {
-  axios.get('lists')
-    .then(response => {
-      lists.value = response.data.map(list => ({
-        id: list.id,
-        name: list.name,
-        crossed_out: list.crossed_out,
-        items: [],
-        newItemName: ''
-      }));
-      lists.value.forEach(list => {
+async function loadAllLists() {
+  try {
+    // Fetch all lists
+    const response = await axios.get('lists');
+    
+    // Directly assign the response data to lists.value
+    lists.value = response.data.map(list => ({
+      ...list,
+      items: [],
+      newItemName: ''
+    }));
+
+    // Fetch items for each list individually
+    await Promise.all(lists.value.map(async (list) => {
+      try {
         getItemsByList(list.id);
-      });
-    })
-    .catch(error => {
-      console.error(error);
-    });
+      } catch (error) {
+        console.error(`Error fetching items for list "${list.name}":`, error);
+      }
+    }));
+  } catch (error) {
+    console.error('Error fetching lists:', error);
+  }
 }
 
-function loadList(listId) {
+function loadNewList(listId) {
   axios.get(`lists/${listId}`)
     .then(response => {
       const list = response.data;
@@ -133,7 +138,6 @@ function loadList(listId) {
         items: [],
         newItemName: ''
       });
-      getItemsByList(listId);
     })
     .catch(error => {
       console.error(error);
@@ -156,7 +160,7 @@ function createList() {
   axios.post('/lists', { name: newListName.value })
     .then(response => {
       const newListId = response.data.id;
-      loadList(newListId);
+      loadNewList(newListId);
       newListName.value = ''; // Clear the input after submission
     })
     .catch(error => {
@@ -168,7 +172,7 @@ function updateList(list, newName = null, crossedOut = null) {
   const updates = {};
   if (newName) {
     const matchesExistingName = lists.value
-      .find(l => l.name.toLowerCase() === newName.toLowerCase());
+      .some(l => l.name.toLowerCase() === newName.toLowerCase());
     if (matchesExistingName) {
       alert('List name already in use');
 
@@ -267,7 +271,7 @@ function deleteList(list) {
               {{ list.name }}
             </span>
           </template>
-          <form @submit.prevent="createItem(list.id)">
+          <form @submit.prevent="createItem(list)">
             <button type="submit" :class="addButton">➕</button>
             <input type="text"
               v-model="list.newItemName"

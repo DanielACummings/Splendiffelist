@@ -22,7 +22,7 @@
     - In a separate terminal tab or window: `npm run dev`
 - Open http://localhost:8000 in any browser
 
-## Refactoring Plans
+## Refactoring Plans & To Dos
 - Fix vulnerabilities found with NPM audit
 - Create List component
 - Move custom CSS classes from Dashboard.vue & Item.vue to their own composable file
